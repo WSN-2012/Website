@@ -94,6 +94,41 @@ public class Database {
 		return null;
 	}
 	
+	public User register(String username, String password, String email, String name) {
+		try {
+			int id = 0;
+			ResultSet rs = statement
+					.executeQuery("select max(id) as id from admins");
+			if (rs.next()) {
+				id = rs.getInt("id");
+			}
+			
+			// Submit a query, creating a ResultSet object
+			statement.executeUpdate("insert into admins values('" + (++id) + "','" + username + "','" + password + "','" 
+							+ email + "','" + name + "')");
+			
+			rs = statement
+					.executeQuery("select username, password, email, name from admins where id = '" + id + "'");
+
+			if (rs.next()) {
+				User user = new User(rs.getString("username"),
+						rs.getString("password"), rs.getString("email"),
+						rs.getString("name"));
+				rs.close();
+				return user;
+			} else {
+				rs.close();
+				return null;
+			}
+		} catch (SQLException ex) {
+			while (ex != null) {
+				System.out.println("SQL Exception:  " + ex.getMessage());
+				ex = ex.getNextException();
+			}
+		}
+		return null;
+	}
+	
 	//Static Test of database
 	/*public static void main(String args[]){
 		//Create a new database connection
@@ -101,9 +136,9 @@ public class Database {
 				
 		//Open the database connection
 		database.Open();
-		
-		//Create a user instance
-		User user = database.login("natty", "natty");
+	
+		//Register a new user
+		//User user = database.register("natty", "natty", "natty@kth.se", "Natalia Paratsikidou");
 		System.out.println("Username: "+user.getUserName()+" Password: "+
 						user.getPassword()+" name: "+user.getName()+ " email: "
 						+user.getEmail());

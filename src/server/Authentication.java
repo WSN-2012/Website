@@ -15,4 +15,18 @@ public class Authentication {
 		return user;
 
 	}
+	
+	public static User register(String username, String password, String email, String name)
+	{
+		//Create a new database connection
+		Database database = new Database("jdbc:postgresql://localhost:5432/serverdb", "postgres", "1234567890", "org.postgresql.Driver");
+		
+		//Open the database connection
+		database.Open();
+		
+		//Create a user instance
+		User user = database.register(username, password, email, name);
+		return user;
+
+	}
 }
