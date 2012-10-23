@@ -69,9 +69,10 @@ public class Database {
 
 	public User login(String username, String password) {
 		try {
+			
 			// Submit a query, creating a ResultSet object
 			ResultSet rs = statement
-					.executeQuery("select username from admins where username = '"
+					.executeQuery("select username, password, email, name from admins where username = '"
 							+ username + "' and password = '" + password + "'");
 
 			if (rs.next()) {
@@ -92,5 +93,20 @@ public class Database {
 		}
 		return null;
 	}
+	
+	//Static Test of database
+	/*public static void main(String args[]){
+		//Create a new database connection
+		Database database = new Database("jdbc:postgresql://localhost:5432/serverdb", "postgres", "1234567890", "org.postgresql.Driver");
+				
+		//Open the database connection
+		database.Open();
+		
+		//Create a user instance
+		User user = database.login("natty", "natty");
+		System.out.println("Username: "+user.getUserName()+" Password: "+
+						user.getPassword()+" name: "+user.getName()+ " email: "
+						+user.getEmail());
+	}*/
 
 }

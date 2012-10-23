@@ -7,6 +7,7 @@
 <title>WSN-Server - Homepage</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link href="css/template_style.css" rel="stylesheet" type="text/css" />
+<link href="css/hide.css" rel="stylesheet" type="text/css" />
 <link href="css/coda-slider.css" rel="stylesheet" type="text/css" media="screen" charset="utf-8" />
 <script src="js/jquery-1.2.6.js" type="text/javascript"></script>
 <script src="js/jquery.scrollTo-1.3.3.js" type="text/javascript"></script>
@@ -19,13 +20,15 @@
 <body>
 <%
 boolean loggedIn = false;
+boolean loginfail = false;
 User loggedInUser = (User) session.getAttribute(SessionKeys.USER_OBJECT);
-if(loggedInUser != null){ //user in already logged in
+if(loggedInUser != null){ //user is already logged in
 	loggedIn = true;
 	if(request.getParameter("logout") != null){
 		session.removeAttribute(SessionKeys.USER_OBJECT);
 		session.invalidate();
 		loggedIn = false;
+		loginfail = false;
 	}
 }
 else{
@@ -37,9 +40,12 @@ else{
 			//user successfully logged in.
 			session.setAttribute(SessionKeys.USER_OBJECT, loggedInUser);
 			loggedIn = true;
+			loginfail = false;
 		}
-	}
-	//stuff to do when not logged in...
+		else{
+			loginfail=true;
+		}
+	}//stuff to do when not logged in...	
 }
 
 
@@ -146,7 +152,9 @@ else{
 	                                <div class="cleaner_h10"></div>
 	
 	                                <input type="submit" class="submit_btn" name="login" id="login" value="Login" />
-	                            
+	                                <%if(loginfail) {%>
+	                            		<p id="usernotfound">Login Failed! Check your credentials and try again</p>
+	                            	<%} %>
 	                            </form>
 							</div>
 							<br />
