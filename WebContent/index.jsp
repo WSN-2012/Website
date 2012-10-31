@@ -20,7 +20,7 @@
 <body>
 <%
 boolean loggedIn = false;
-boolean loginfail = false;
+boolean loginfail = false;//to printout message if the user inserts wrong or not existing credentials in login page
 User loggedInUser = (User) session.getAttribute(SessionKeys.USER_OBJECT);
 if(loggedInUser != null){ //user is already logged in
 	loggedIn = true;
@@ -33,6 +33,7 @@ if(loggedInUser != null){ //user is already logged in
 }else{
 	if(request.getParameter("username") !=null &&
 		request.getParameter("password") != null &&
+		request.getParameter("login") !=null &&
 		request.getParameter("login").equals("Login")){ //login has been requested
 		loggedInUser = Authentication.login(request.getParameter("username"), request.getParameter("password"));
 		if (loggedInUser != null) {
@@ -48,9 +49,12 @@ if(loggedInUser != null){ //user is already logged in
 			request.getParameter("email")!=null &&
 			request.getParameter("username")!=null &&
 			request.getParameter("password")!=null &&
+			request.getParameter("register")!=null &&
 			request.getParameter("register").equals("Register")){
 		loggedInUser = Authentication.register(request.getParameter("username"), request.getParameter("password"), request.getParameter("email"), request.getParameter("author"));
 		
+		loggedIn = true;
+		loginfail = false;
 	}
 }
 
