@@ -1,6 +1,10 @@
 package server;
 
 import java.sql.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Database {
 	/*
@@ -129,6 +133,74 @@ public class Database {
 		return null;
 	}
 	
+	//Check if username already exists in the DB
+	public boolean exist(String username) {
+		boolean exist = false;//indicate that username exists in DB
+		try {
+			
+			// Submit a query, creating a ResultSet object
+			ResultSet rs = statement
+					.executeQuery("select username from admins where username = '"
+							+ username + "'");
+
+			if (rs.next()) {
+				exist = true;
+			} 
+				rs.close();
+				return exist;
+			
+		} catch (SQLException ex) {
+			while (ex != null) {
+				System.out.println("SQL Exception:  " + ex.getMessage());
+				ex = ex.getNextException();
+			}
+		}
+		return exist;
+	}
+	
+	public List<Data> getAllData() {
+		try {
+			
+			List<Data> listData = new ArrayList<Data>();
+			// Submit a query, creating a ResultSet object
+			ResultSet rs = statement
+					.executeQuery("select * from wsndata ");
+
+			while (rs.next()) {
+				Data data = new Data();
+				double t = -100;
+				double ps = -100;
+				double t_mcu = -100;
+				double v_mcu = -100;
+				String up = null;
+				double rh = -100;
+				double v_in = -100;
+				double v_a1 = -100;
+				data.setId(rs.getString("id"));
+				data.setUtimestamp(rs.getTimestamp("utimestamp"));
+				data.setUt(rs.getInt("ut"));
+				if (rs.getDouble("t")!= -100) {t = rs.getDouble("t"); data.setT(t);}
+				if (rs.getDouble("ps")!= -100) {ps = rs.getDouble("ps"); data.setPs(ps);}
+				if (rs.getDouble("t_mcu")!= -100) {t_mcu = rs.getDouble("t_mcu"); data.setT_mcu(t_mcu);}
+				if (rs.getDouble("v_mcu")!= -100) {v_mcu = rs.getDouble("v_mcu"); data.setV_mcu(v_mcu);}
+				if (rs.getString("up")!= null) {up = rs.getString("up"); data.setUp(up);}
+				if (rs.getDouble("rh")!= -100) {rh = rs.getDouble("rh"); data.setRh(rh);}
+				if (rs.getDouble("v_in")!= -100) {v_in = rs.getDouble("v_in"); data.setV_in(v_in);}
+				if (rs.getDouble("v_a1")!= -100) {v_a1 = rs.getDouble("v_a1"); data.setV_a1(v_a1);}
+				listData.add(data);
+				
+			} 
+			rs.close();
+			return listData;
+		} catch (SQLException ex) {
+			while (ex != null) {
+				System.out.println("SQL Exception:  " + ex.getMessage());
+				ex = ex.getNextException();
+			}
+		}
+		return null;
+	}
+	
 	//Static Test of database
 	/*public static void main(String args[]){
 		//Create a new database connection
@@ -138,10 +210,11 @@ public class Database {
 		database.Open();
 	
 		//Register a new user
-		//User user = database.register("natty", "natty", "natty@kth.se", "Natalia Paratsikidou");
-		System.out.println("Username: "+user.getUserName()+" Password: "+
-						user.getPassword()+" name: "+user.getName()+ " email: "
-						+user.getEmail());
+		List<Data> data = database.getAllData();
+		for (int i=0; i< data.size(); i++)
+			System.out.println("ID: " + data.get(i).getId() + " Utimestamp: " + data.get(i).getUtimestamp() + " UT: " + data.get(i).getUt()
+					+ " T: " + data.get(i).getT() + " PS: " + data.get(i).getPs() + " T_MCU: " + data.get(i).getT_mcu() + " V_MCU: " + data.get(i).getV_mcu() 
+					+ " UP: " + data.get(i).getUp() + " RH: " + data.get(i).getRh() + " V_IN: " + data.get(i).getV_in() + " V_A1: " + data.get(i).getV_a1());
 	}*/
 
 }

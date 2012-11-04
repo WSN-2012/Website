@@ -7,7 +7,6 @@
 <title>WSN-Server - Homepage</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link href="css/template_style.css" rel="stylesheet" type="text/css" />
-<link href="css/hide.css" rel="stylesheet" type="text/css" />
 <link href="css/coda-slider.css" rel="stylesheet" type="text/css" media="screen" charset="utf-8" />
 <script src="js/jquery-1.2.6.js" type="text/javascript"></script>
 <script src="js/jquery.scrollTo-1.3.3.js" type="text/javascript"></script>
@@ -19,6 +18,7 @@
 
 <body>
 <%
+boolean usernameExist = false;
 boolean loggedIn = false;
 boolean loginfail = false;//to printout message if the user inserts wrong or not existing credentials in login page
 User loggedInUser = (User) session.getAttribute(SessionKeys.USER_OBJECT);
@@ -35,9 +35,8 @@ if(loggedInUser != null){ //user is already logged in
 		request.getParameter("password") != null &&
 		request.getParameter("login") !=null &&
 		request.getParameter("login").equals("Login")){ //login has been requested
-		loggedInUser = Authentication.login(request.getParameter("username"), request.getParameter("password"));
-		if (loggedInUser != null) {
-			//user successfully logged in.
+		loggedInUser = SQLQueries.login(request.getParameter("username"), request.getParameter("password"));
+		if (loggedInUser != null) {//user successfully logged in.
 			session.setAttribute(SessionKeys.USER_OBJECT, loggedInUser);
 			loggedIn = true;
 			loginfail = false;
@@ -46,19 +45,29 @@ if(loggedInUser != null){ //user is already logged in
 			loginfail=true;
 		}
 	}else if(request.getParameter("author")!=null &&
-			request.getParameter("email")!=null &&
-			request.getParameter("username")!=null &&
-			request.getParameter("password")!=null &&
-			request.getParameter("register")!=null &&
-			request.getParameter("register").equals("Register")){
-		loggedInUser = Authentication.register(request.getParameter("username"), request.getParameter("password"), request.getParameter("email"), request.getParameter("author"));
-		
-		loggedIn = true;
-		loginfail = false;
+	request.getParameter("email")!=null &&
+	request.getParameter("username")!=null &&
+	request.getParameter("password")!=null &&
+	request.getParameter("register")!=null &&
+	request.getParameter("register").equals("Register")){
+		if(SQLQueries.usernameExistance(request.getParameter("username"))){
+			usernameExist = true;
+			out.println("<h1>Natty</h1>");
+		}else{
+			loggedInUser = SQLQueries.register(request.getParameter("username"), request.getParameter("password"), request.getParameter("email"), request.getParameter("author"));
+			if(loggedInUser != null){//user successfully registered and logged in.
+				session.setAttribute(SessionKeys.USER_OBJECT, loggedInUser);
+				loggedIn = true;
+				loginfail = false;
+				usernameExist = false;
+			}
+			else{
+				loginfail=true;
+				usernameExist = false;
+			}
+		}
 	}
 }
-
-
 %>
 <div id="slider">
 	
@@ -162,9 +171,15 @@ if(loggedInUser != null){ //user is already logged in
 	                                <div class="cleaner_h10"></div>
 	
 	                                <input type="submit" class="submit_btn" name="login" id="login" value="Login" />
-	                                <%if(loginfail) {%>
-	                            		<p id="usernotfound">Login Failed! Check your credentials and try again</p>
-	                            	<%} %>
+	                                <%
+										if(usernameExist){
+									%>
+	                            		<p id="errmsg" style="color: red;">Username already exists! Choose another username and try again.</p>
+	                                <%
+	                                }else if(loginfail) {
+	                                %>
+	                            		<p id="errmsg" style="color: red;">Login Failed! Check your credentials and try again.</p>
+	                            	<% } %>
 	                            </form>
 							</div>
 							<br />
@@ -194,7 +209,8 @@ if(loggedInUser != null){ //user is already logged in
 	                                <label for="email">Your Email:</label> <input type="text" id="email" name="email" class="validate-email required input_field" />
 	                                <div class="cleaner_h10"></div>
 	                                
-	                                <label for="username">Choose a username:</label> <input type="text" id="username" name="username" class="required input_field" />
+	                                <label for="username">Choose a username:</label> <input type="text" id="username" name="username" class="required input_field" onchange="checkUsernameExistence()"/>
+	                                
 	                                <div class="cleaner_h10"></div>
 	                                
 	                                <label for="password">Choose a password:</label> <input type="password" id="password" name="password" class="required input_field" />
@@ -204,11 +220,11 @@ if(loggedInUser != null){ //user is already logged in
 	                                <div class="cleaner_h10"></div>
 	
 	                                <input type="submit" class="submit_btn" name="register" id="register" value="Register" />
-	                            
+	                            	
 	                            </form>
 							</div>
 						<%
-						}
+							}
 						%>
                     </div>
                     
