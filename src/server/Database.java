@@ -171,7 +171,7 @@ public class Database {
 				//create data object from resultset
 				Data data = new Data (rs.getString("id"), rs.getTimestamp("utimestamp"), rs.getInt("ut"), rs.getDouble("t"),
 						rs.getDouble("ps"), rs.getDouble("t_mcu"), rs.getDouble("v_mcu"), rs.getString("up"), rs.getDouble("rh"),
-						rs.getDouble("v_in"), rs.getDouble("v_a1"), rs.getInt("gateway_id"));
+						rs.getDouble("v_in"), rs.getDouble("v_a1"), rs.getString("name"));
 				
 				listData.add(data);//add data object to the list to be returned
 				
@@ -221,12 +221,12 @@ public class Database {
 			List<Data> listData = new ArrayList<Data>();
 			// Submit a query, creating a ResultSet object
 			ResultSet rs = statement
-					.executeQuery("select * from wsndata where gateway_id = " + gatewayID);
+					.executeQuery("select * from wsndata,gateway where gateway_id = " + gatewayID);
 
 			while (rs.next()) {
 				Data data = new Data (rs.getString("id"), rs.getTimestamp("utimestamp"), rs.getInt("ut"), rs.getDouble("t"),
 						rs.getDouble("ps"), rs.getDouble("t_mcu"), rs.getDouble("v_mcu"), rs.getString("up"), rs.getDouble("rh"),
-						rs.getDouble("v_in"), rs.getDouble("v_a1"), rs.getInt("gateway_id"));
+						rs.getDouble("v_in"), rs.getDouble("v_a1"), rs.getString("name"));
 				
 				listData.add(data);//add data object to the list to be returned
 			}

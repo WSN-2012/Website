@@ -9,9 +9,9 @@
 <link href="css/template_style.css" rel="stylesheet" type="text/css" />
 <link href="css/coda-slider.css" rel="stylesheet" type="text/css" media="screen" charset="utf-8" />
 <script src="js/jquery-1.2.6.js" type="text/javascript"></script>
-<script src="js/jquery.scrollTo-1.3.3.js" type="text/javascript"></script>
+<!-- <script src="js/jquery.scrollTo-1.3.3.js" type="text/javascript"></script>
 <script src="js/jquery.localscroll-1.2.5.js" type="text/javascript" charset="utf-8"></script>
-<script src="js/jquery.serialScroll-1.2.1.js" type="text/javascript" charset="utf-8"></script>
+<script src="js/jquery.serialScroll-1.2.1.js" type="text/javascript" charset="utf-8"></script>-->
 <script src="js/coda-slider.js" type="text/javascript" charset="utf-8"></script>
 <script src="js/jquery.easing.1.3.js" type="text/javascript" charset="utf-8"></script>
 </head>
@@ -20,7 +20,7 @@
 <%
 boolean usernameExist = false;
 boolean loggedIn = false;
-boolean loginfail = false;//to printout message if the user inserts wrong or not existing credentials in login page
+session.setAttribute("loginFail", false);//to printout error messages in the login page
 User loggedInUser = (User) session.getAttribute(SessionKeys.USER_OBJECT);
 if(loggedInUser != null){ //user is already logged in
 	loggedIn = true;
@@ -28,7 +28,7 @@ if(loggedInUser != null){ //user is already logged in
 		session.removeAttribute(SessionKeys.USER_OBJECT);
 		session.invalidate();
 		loggedIn = false;
-		loginfail = false;
+		session.setAttribute("loginFail", false);
 	}
 }else{
 	if(request.getParameter("username") !=null &&
@@ -39,32 +39,11 @@ if(loggedInUser != null){ //user is already logged in
 		if (loggedInUser != null) {//user successfully logged in.
 			session.setAttribute(SessionKeys.USER_OBJECT, loggedInUser);
 			loggedIn = true;
-			loginfail = false;
+			session.setAttribute("loginFail", false);
 		}
 		else{
-			loginfail=true;
-		}
-	}else if(request.getParameter("author")!=null &&
-	request.getParameter("email")!=null &&
-	request.getParameter("username")!=null &&
-	request.getParameter("password")!=null &&
-	request.getParameter("register")!=null &&
-	request.getParameter("register").equals("Register")){
-		if(SQLQueries.usernameExistance(request.getParameter("username"))){
-			usernameExist = true;
-			out.println("<h1>Natty</h1>");
-		}else{
-			loggedInUser = SQLQueries.register(request.getParameter("username"), request.getParameter("password"), request.getParameter("email"), request.getParameter("author"));
-			if(loggedInUser != null){//user successfully registered and logged in.
-				session.setAttribute(SessionKeys.USER_OBJECT, loggedInUser);
-				loggedIn = true;
-				loginfail = false;
-				usernameExist = false;
-			}
-			else{
-				loginfail=true;
-				usernameExist = false;
-			}
+			session.setAttribute("loginFail", true);
+			session.setAttribute("err", "Login Failed! Please check your credentials and try again");
 		}
 	}
 }
@@ -81,10 +60,14 @@ if(loggedInUser != null){ //user is already logged in
          <!-- end of header -->
         
         <ul class="navigation">
-            <li><a href="#home">Home<span class="ui_icon home"></span></a></li>
-            <li><a href="#account"><%if(loggedIn)%>Account Settings<span class="ui_icon aboutus"></span><%else%>Sign Up<span class="ui_icon aboutus"></span></a></li>
-            <li><a href="#config">Server Configuration<span class="ui_icon services"></span></a></li>
-            <li><a href="#contactus">Contact Us<span class="ui_icon contactus"></span></a></li>
+            <li><a href="index.jsp" lang="selected">Home<span class="ui_icon home"></span></a></li>
+            <%if(loggedIn){%>
+            	<li><a href="AccountSettings.jsp">Account Settings<span class="ui_icon aboutus"></span></a></li>
+            <%}else{%>
+            	<li><a href="Register.jsp">Sign Up<span class="ui_icon aboutus"></span></a></li>
+            <%} %>
+            <li><a href="ServerConfig.jsp">Server Configuration<span class="ui_icon services"></span></a></li>
+            <li><a href="ContactUs.jsp">Contact Us<span class="ui_icon contactus"></span></a></li>
         </ul>
     </div> <!-- end of sidebar -->
 
@@ -176,7 +159,7 @@ if(loggedInUser != null){ //user is already logged in
 									%>
 	                            		<p id="errmsg" style="color: red;">Username already exists! Choose another username and try again.</p>
 	                                <%
-	                                }else if(loginfail) {
+	                                }else if((Boolean)session.getAttribute("loginFail")) {
 	                                %>
 	                            		<p id="errmsg" style="color: red;">Login Failed! Check your credentials and try again.</p>
 	                            	<% } %>
@@ -190,86 +173,14 @@ if(loggedInUser != null){ //user is already logged in
 						
                      	
                      	</div> <!-- end of home -->
-                    
-                    <div class="panel" id="account">
-                        <%
-						if(loggedIn){
-						%>
-							<p>Here you can modify your account information.</p>
-						
-						<%
-						}else{
-						%>
-	                        <div id="register_form">
-	                            <form method="post" name="contact" action="index.jsp">
-	                                
-	                                <label for="author">Your Name:</label> <input type="text" id="author" name="author" class="required input_field" />
-	                                <div class="cleaner_h10"></div>
-	                                
-	                                <label for="email">Your Email:</label> <input type="text" id="email" name="email" class="validate-email required input_field" />
-	                                <div class="cleaner_h10"></div>
-	                                
-	                                <label for="username">Choose a username:</label> <input type="text" id="username" name="username" class="required input_field" onchange="checkUsernameExistence()"/>
-	                                
-	                                <div class="cleaner_h10"></div>
-	                                
-	                                <label for="password">Choose a password:</label> <input type="password" id="password" name="password" class="required input_field" />
-	                                <div class="cleaner_h10"></div>
-	                                
-	                                <label for="password">Repeat your password:</label> <input type="password" id="password2" name="password2" class="required input_field" />
-	                                <div class="cleaner_h10"></div>
-	
-	                                <input type="submit" class="submit_btn" name="register" id="register" value="Register" />
-	                            	
-	                            </form>
-							</div>
-						<%
-							}
-						%>
+                     	
                     </div>
-                    
-                    <div class="panel" id="config">
-                        <%
-						if(loggedIn){
-						%>
-							<p>Here you can configure the server.</p>
-						
-						<%
-						}else{
-						%>
-	                        <p>You do not have access to this area! Please <a href="#home">login</a> first.</p>
-						<%
-						}
-						%>
-                    </div>
-                
-                    <div class="panel" id="contactus">
-                        <h1>Feel free to send us a message</h1>
-                        <div id="contact_form">
-                            <form method="post" name="contact" action="#contactus">
-                                
-                                <label for="author">Your Name:</label> <input type="text" id="author" name="author" class="required input_field" />
-                                <div class="cleaner_h10"></div>
-                                
-                                <label for="email">Your Email:</label> <input type="text" id="email" name="email" class="validate-email required input_field" />
-                                <div class="cleaner_h10"></div>
-                                
-                                <label for="text">Message:</label> <textarea id="text" name="text" rows="0" cols="0" class="required"></textarea>
-                                <div class="cleaner_h10"></div>
-                                
-                                <input type="submit" class="submit_btn" name="submit" id="submit" value="Send" />
-                                <input type="reset" class="submit_btn" name="reset" id="reset" value="Reset" />
-                            
-                            </form>
-						</div>
-                    </div>
-                
                 </div>
 			</div>
             
         <!-- end of scroll -->
         
-        </div> <!-- end of content -->
+        </div> <!-- end of templato_main -->
         
         <div id="templatemo_footer">
 

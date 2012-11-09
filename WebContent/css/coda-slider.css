@@ -109,7 +109,9 @@ ul.navigation a .services { background: url(../images/templatemo_services.png)  
 ul.navigation a .gallery { background:  url(../images/templatemo_portfolio.png) no-repeat; }
 ul.navigation a .contactus { background:  url(../images/templatemo_contact.png) no-repeat; }
 
-ul.navigation a:hover, ul.navigation a.selected {
+
+
+ul.navigation a:hover, ul.navigation a:LANG(selected) {
 	color: #201f1b;
 	background: url(../images/templatemo_menu_hover.png) no-repeat left;
 }
