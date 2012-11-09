@@ -4,6 +4,7 @@ import java.sql.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class Database {
@@ -167,29 +168,69 @@ public class Database {
 					.executeQuery("select * from wsndata ");
 
 			while (rs.next()) {
-				Data data = new Data();
-				double t = -100;
-				double ps = -100;
-				double t_mcu = -100;
-				double v_mcu = -100;
-				String up = null;
-				double rh = -100;
-				double v_in = -100;
-				double v_a1 = -100;
-				data.setId(rs.getString("id"));
-				data.setUtimestamp(rs.getTimestamp("utimestamp"));
-				data.setUt(rs.getInt("ut"));
-				if (rs.getDouble("t")!= -100) {t = rs.getDouble("t"); data.setT(t);}
-				if (rs.getDouble("ps")!= -100) {ps = rs.getDouble("ps"); data.setPs(ps);}
-				if (rs.getDouble("t_mcu")!= -100) {t_mcu = rs.getDouble("t_mcu"); data.setT_mcu(t_mcu);}
-				if (rs.getDouble("v_mcu")!= -100) {v_mcu = rs.getDouble("v_mcu"); data.setV_mcu(v_mcu);}
-				if (rs.getString("up")!= null) {up = rs.getString("up"); data.setUp(up);}
-				if (rs.getDouble("rh")!= -100) {rh = rs.getDouble("rh"); data.setRh(rh);}
-				if (rs.getDouble("v_in")!= -100) {v_in = rs.getDouble("v_in"); data.setV_in(v_in);}
-				if (rs.getDouble("v_a1")!= -100) {v_a1 = rs.getDouble("v_a1"); data.setV_a1(v_a1);}
-				listData.add(data);
+				//create data object from resultset
+				Data data = new Data (rs.getString("id"), rs.getTimestamp("utimestamp"), rs.getInt("ut"), rs.getDouble("t"),
+						rs.getDouble("ps"), rs.getDouble("t_mcu"), rs.getDouble("v_mcu"), rs.getString("up"), rs.getDouble("rh"),
+						rs.getDouble("v_in"), rs.getDouble("v_a1"), rs.getInt("gateway_id"));
+				
+				listData.add(data);//add data object to the list to be returned
 				
 			} 
+			rs.close();
+			return listData;
+		} catch (SQLException ex) {
+			while (ex != null) {
+				System.out.println("SQL Exception:  " + ex.getMessage());
+				ex = ex.getNextException();
+			}
+		}
+		return null;
+	}
+	
+	public List<Gateway> getAllGateways() {
+		try {
+			
+			List<Gateway> listGateway = new ArrayList<Gateway>();
+			// Submit a query, creating a ResultSet object
+			ResultSet rs = statement
+					.executeQuery("select * from gateway ");
+
+			while (rs.next()) {
+				int id = rs.getInt("id");
+				String name = rs.getString("name");
+				boolean publicity = rs.getBoolean("publicity");
+				Gateway gateway = new Gateway(id, name, publicity);
+				
+				listGateway.add(gateway);	
+			}
+			
+			rs.close();
+			return listGateway;
+		} catch (SQLException ex) {
+			while (ex != null) {
+				System.out.println("SQL Exception:  " + ex.getMessage());
+				ex = ex.getNextException();
+			}
+		}
+		return null;
+	}
+	
+	public List<Data> getGatewayData(int gatewayID) {
+		try {
+			
+			List<Data> listData = new ArrayList<Data>();
+			// Submit a query, creating a ResultSet object
+			ResultSet rs = statement
+					.executeQuery("select * from wsndata where gateway_id = " + gatewayID);
+
+			while (rs.next()) {
+				Data data = new Data (rs.getString("id"), rs.getTimestamp("utimestamp"), rs.getInt("ut"), rs.getDouble("t"),
+						rs.getDouble("ps"), rs.getDouble("t_mcu"), rs.getDouble("v_mcu"), rs.getString("up"), rs.getDouble("rh"),
+						rs.getDouble("v_in"), rs.getDouble("v_a1"), rs.getInt("gateway_id"));
+				
+				listData.add(data);//add data object to the list to be returned
+			}
+			
 			rs.close();
 			return listData;
 		} catch (SQLException ex) {
@@ -210,11 +251,12 @@ public class Database {
 		database.Open();
 	
 		//Register a new user
-		List<Data> data = database.getAllData();
+		List<Data> data = database.getGatewayData(1);
 		for (int i=0; i< data.size(); i++)
 			System.out.println("ID: " + data.get(i).getId() + " Utimestamp: " + data.get(i).getUtimestamp() + " UT: " + data.get(i).getUt()
 					+ " T: " + data.get(i).getT() + " PS: " + data.get(i).getPs() + " T_MCU: " + data.get(i).getT_mcu() + " V_MCU: " + data.get(i).getV_mcu() 
-					+ " UP: " + data.get(i).getUp() + " RH: " + data.get(i).getRh() + " V_IN: " + data.get(i).getV_in() + " V_A1: " + data.get(i).getV_a1());
+					+ " UP: " + data.get(i).getUp() + " RH: " + data.get(i).getRh() + " V_IN: " + data.get(i).getV_in() + " V_A1: " + data.get(i).getV_a1()
+					+ " GatewayID: " + data.get(i).getGateway_id());
 	}*/
 
 }
