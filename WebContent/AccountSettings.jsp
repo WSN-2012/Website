@@ -32,42 +32,34 @@ if(loggedInUser != null){ //user is already logged in
 		session.invalidate();
 		loggedIn = false;
 		loginfail = false;
-	}
-}else{
-	if(request.getParameter("username") !=null &&
-		request.getParameter("password") != null &&
-		request.getParameter("login") !=null &&
-		request.getParameter("login").equals("Login")){ //login has been requested
-		loggedInUser = SQLQueries.login(request.getParameter("username"), request.getParameter("password"));
-		if (loggedInUser != null) {//user successfully logged in.
-			session.setAttribute(SessionKeys.USER_OBJECT, loggedInUser);
-			loggedIn = true;
-			loginfail = false;
-		}
-		else{
-			loginfail=true;
-		}
-	}else if(request.getParameter("author")!=null &&
-	request.getParameter("email")!=null &&
-	request.getParameter("username")!=null &&
-	request.getParameter("password")!=null &&
-	request.getParameter("register")!=null &&
-	request.getParameter("register").equals("Register")){
-		if(SQLQueries.usernameExistance(request.getParameter("username"))){
-			usernameExist = true;
-			out.println("<h1>Natty</h1>");
-		}else{
-			loggedInUser = SQLQueries.register(request.getParameter("username"), request.getParameter("password"), request.getParameter("email"), request.getParameter("author"));
-			if(loggedInUser != null){//user successfully registered and logged in.
+	}else if(request.getParameter("save_settings")!=null &&
+			request.getParameter("save_settings").equals("Save")){
+		if(request.getParameter("password")!=null && request.getParameter("password")!="" && request.getParameter("password").equals(request.getParameter("password2"))){
+			System.out.println("natty");
+			loggedInUser = SQLQueries.changeAccountSettings(request.getParameter("author"), loggedInUser.getUserName(), request.getParameter("username"), request.getParameter("email"), request.getParameter("password"));
+			if(loggedInUser!=null){
+				session.removeAttribute(SessionKeys.USER_OBJECT);
 				session.setAttribute(SessionKeys.USER_OBJECT, loggedInUser);
-				loggedIn = true;
-				loginfail = false;
-				usernameExist = false;
 			}
-			else{
-				loginfail=true;
-				usernameExist = false;
+			response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
+			String newLocn = "index.jsp";
+			response.setHeader("Location",newLocn);
+		}else if(request.getParameter("password")!=null && !(request.getParameter("password").equals(request.getParameter("password2")))){
+			System.out.println("fabio");
+			request.setAttribute("err", "Password not equal");//Display error
+			response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
+			String newLocn = "Register.jsp";
+			response.setHeader("Location",newLocn);
+		}else{
+			System.out.println("fabio");
+			loggedInUser = SQLQueries.changeAccountSettings(request.getParameter("author"), loggedInUser.getUserName(), request.getParameter("username"), request.getParameter("email"));
+			if(loggedInUser!=null){
+				session.removeAttribute(SessionKeys.USER_OBJECT);
+				session.setAttribute(SessionKeys.USER_OBJECT, loggedInUser);
 			}
+			response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
+			String newLocn = "index.jsp";
+			response.setHeader("Location",newLocn);
 		}
 	}
 }
@@ -98,6 +90,13 @@ if(loggedInUser != null){ //user is already logged in
 	<div id="templatemo_main">
     	        
         <div id="content">
+        <%if(loggedIn){%>
+        					<div id="logout">
+            				<form method="post" name="contact" action="index.jsp">
+            				<input type="submit" name="logout" id="logout" value="Logout" />
+            				</form>
+            				</div>
+            <%}%>
             	
             <div class="scroll">
                 <div class="scrollContainer">
@@ -106,14 +105,40 @@ if(loggedInUser != null){ //user is already logged in
                         <%
 						if(loggedIn){%>
 						
-							<p>Here you can modify your Account Settings</p>
+							<h2>Here you can modify your Account Settings</h2>
+							 <div id="accountSettings_form">
+	                            <form method="post" name="contact" >
+	                                
+	                                <label for="author">Edit Name:</label> <input type="text" id="author" name="author" value="<% out.print(((User)session.getAttribute(SessionKeys.USER_OBJECT)).getName()); %>" class="input_field" />
+	                                <div class="cleaner_h10"></div>
+	                                
+	                                <label for="email">Edit Email:</label> <input type="text" id="email" name="email" value="<% out.print(((User)session.getAttribute(SessionKeys.USER_OBJECT)).getEmail()); %>" class="validate-email input_field" />
+	                                <div class="cleaner_h10"></div>
+	                                
+	                                <label for="username">Edit Username:</label> <input type="text" id="username" name="username" value=" <% out.print(((User)session.getAttribute(SessionKeys.USER_OBJECT)).getUserName()); %>" class="input_field" onchange="checkUsernameExistence()"/>
+	                                
+	                                <div class="cleaner_h10"></div>
+	                                
+	                                <label for="password">Edit a new password:</label> <input type="password" id="password" name="password" class="input_field" />
+	                                <div class="cleaner_h10"></div>
+	                                
+	                                <label for="password">Repeat new password:</label> <input type="password" id="password2" name="password2" class="<%if(request.getParameter("password")!=null)out.print("required"); %> input_field" />
+	                                <div class="cleaner_h10"></div>
+	
+	                                <input type="submit" class="submit_btn" name="save_settings" id="save_settings" value="Save" />
+	                                
+	                                <% 
+										if(request.getAttribute("err")!=null){
+									%>
+	                            		<p id="errmsg" style="color: red;"><%out.print(request.getAttribute("err"));%></p>
+	                            </form>
+							</div>
 
-						<%}else{
-							session.setAttribute("loginFail", true);
-							session.setAttribute("err", "You have to login first in order to change you account settings.");
-	                        response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
-							String newLocn = "index.jsp";
-							response.setHeader("Location",newLocn);
+						<%}}else{
+							request.setAttribute("loginFail", true);
+							request.setAttribute("err", "You have to login first in order to change you account settings.");
+							RequestDispatcher rd = request.getRequestDispatcher("index.jsp");
+							rd.forward(request, response);
 							}
 						%>
                     </div>

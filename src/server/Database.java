@@ -77,13 +77,13 @@ public class Database {
 			
 			// Submit a query, creating a ResultSet object
 			ResultSet rs = statement
-					.executeQuery("select username, password, email, name from admins where username = '"
+					.executeQuery("select  username, password, email, name from admins where username = '"
 							+ username + "' and password = '" + password + "'");
 
 			if (rs.next()) {
-				User user = new User(rs.getString("username"),
-						rs.getString("password"), rs.getString("email"),
-						rs.getString("name"));
+				User user = new User(rs.getString("username").trim(),
+						rs.getString("password").trim(), rs.getString("email").trim(),
+						rs.getString("name").trim());
 				rs.close();
 				return user;
 			} else {
@@ -116,9 +116,9 @@ public class Database {
 					.executeQuery("select username, password, email, name from admins where id = '" + id + "'");
 
 			if (rs.next()) {
-				User user = new User(rs.getString("username"),
-						rs.getString("password"), rs.getString("email"),
-						rs.getString("name"));
+				User user = new User(rs.getString("username").trim(),
+						rs.getString("password").trim(), rs.getString("email").trim(),
+						rs.getString("name").trim());
 				rs.close();
 				return user;
 			} else {
@@ -159,19 +159,93 @@ public class Database {
 		return exist;
 	}
 	
+	public User changeAccountSettings(String name, String oldUsername, String newUsername, String email) {
+		try {
+			int accountID = -1;//ID of the account that we want to modify
+			// Submit a query, creating a ResultSet object
+			ResultSet rs = statement
+					.executeQuery("select id from admins where username = '"
+							+ oldUsername + "'");
+			while(rs.next()){
+				accountID = rs.getInt("id");
+				System.out.println("AccountID: "+accountID);
+			}
+			statement
+					.executeUpdate("UPDATE admins SET name = '" + name + "', username = '" + newUsername + "', email = '" + email + "' WHERE id = " + accountID);
+
+			rs = statement
+					.executeQuery("select * from admins where username = '"
+							+ newUsername + "'");
+			if (rs.next()) {
+				User user = new User(rs.getString("username").trim(),
+						rs.getString("password").trim(), rs.getString("email").trim(),
+						rs.getString("name").trim());
+				rs.close();
+				return user;
+			} else {
+				rs.close();
+				return null;
+			}
+			
+		} catch (SQLException ex) {
+			while (ex != null) {
+				System.out.println("SQL Exception:  " + ex.getMessage());
+				ex = ex.getNextException();
+			}
+		}
+		return null;
+	}
+	
+	public User changeAccountSettings(String name, String oldUsername, String newUsername, String email, String password) {
+		try {
+			int accountID = -1;//ID of the account that we want to modify
+			// Submit a query, creating a ResultSet object
+			ResultSet rs = statement
+					.executeQuery("select id from admins where username = '"
+							+ oldUsername + "'");
+			while(rs.next()){
+				accountID = rs.getInt("id");
+			}
+			
+			statement
+					.executeUpdate("UPDATE admins SET name = '" + name + "', username = '" + newUsername + "', email = '" + email + "', password = '" + password + "' WHERE id = " + accountID);
+
+			rs = statement
+					.executeQuery("select * from admins where username = '"
+							+ newUsername + "'");
+			if (rs.next()) {
+				User user = new User(rs.getString("username").trim(),
+						rs.getString("password").trim(), rs.getString("email").trim(),
+						rs.getString("name").trim());
+				rs.close();
+				return user;
+			} else {
+				rs.close();
+				return null;
+			}
+			
+		} catch (SQLException ex) {
+			while (ex != null) {
+				System.out.println("SQL Exception (Password):  " + ex.getMessage());
+				ex = ex.getNextException();
+			}
+		}
+		return null;
+	}
+	
 	public List<Data> getAllData() {
 		try {
 			
 			List<Data> listData = new ArrayList<Data>();
 			// Submit a query, creating a ResultSet object
 			ResultSet rs = statement
-					.executeQuery("select * from wsndata ");
+					.executeQuery("select * from wsndata W,gateway G where W.gateway_id = G.id");
 
 			while (rs.next()) {
 				//create data object from resultset
-				Data data = new Data (rs.getString("id"), rs.getTimestamp("utimestamp"), rs.getInt("ut"), rs.getDouble("t"),
-						rs.getDouble("ps"), rs.getDouble("t_mcu"), rs.getDouble("v_mcu"), rs.getString("up"), rs.getDouble("rh"),
-						rs.getDouble("v_in"), rs.getDouble("v_a1"), rs.getString("name"));
+				Data data = new Data (rs.getString("id").trim(), rs.getTimestamp("utimestamp"), rs.getInt("ut"), rs.getDouble("t"),
+						rs.getDouble("ps"), rs.getDouble("t_mcu"), rs.getDouble("v_mcu"), rs.getString("up").trim(), rs.getDouble("rh"),
+						rs.getDouble("v_in"), rs.getDouble("v_a1"), rs.getString("name").trim());
 				
 				listData.add(data);//add data object to the list to be returned
 				
@@ -181,6 +255,7 @@ public class Database {
 		} catch (SQLException ex) {
 			while (ex != null) {
 				System.out.println("SQL Exception:  " + ex.getMessage());
+				ex.printStackTrace();
 				ex = ex.getNextException();
 			}
 		}
@@ -197,7 +272,7 @@ public class Database {
 
 			while (rs.next()) {
 				int id = rs.getInt("id");
-				String name = rs.getString("name");
+				String name = rs.getString("name").trim();
 				boolean publicity = rs.getBoolean("publicity");
 				Gateway gateway = new Gateway(id, name, publicity);
 				
@@ -206,6 +281,32 @@ public class Database {
 			
 			rs.close();
 			return listGateway;
+		} catch (SQLException ex) {
+			while (ex != null) {
+				System.out.println("SQL Exception:  " + ex.getMessage());
+				ex = ex.getNextException();
+			}
+		}
+		return null;
+	}
+	
+	public Gateway getGateway(int gatewayID) {
+		try {
+			
+			Gateway gateway = null;
+			// Submit a query, creating a ResultSet object
+			ResultSet rs = statement
+					.executeQuery("select * from gateway where id = " +gatewayID);
+
+			while (rs.next()) {
+				int id = rs.getInt("id");
+				String name = rs.getString("name").trim();
+				boolean publicity = rs.getBoolean("publicity");
+				gateway = new Gateway(id, name, publicity);
+			}
+			
+			rs.close();
+			return gateway;
 		} catch (SQLException ex) {
 			while (ex != null) {
 				System.out.println("SQL Exception:  " + ex.getMessage());
@@ -224,9 +325,9 @@ public class Database {
 					.executeQuery("select * from wsndata,gateway where gateway_id = " + gatewayID);
 
 			while (rs.next()) {
-				Data data = new Data (rs.getString("id"), rs.getTimestamp("utimestamp"), rs.getInt("ut"), rs.getDouble("t"),
-						rs.getDouble("ps"), rs.getDouble("t_mcu"), rs.getDouble("v_mcu"), rs.getString("up"), rs.getDouble("rh"),
-						rs.getDouble("v_in"), rs.getDouble("v_a1"), rs.getString("name"));
+				Data data = new Data (rs.getString("id").trim(), rs.getTimestamp("utimestamp"), rs.getInt("ut"), rs.getDouble("t"),
+						rs.getDouble("ps"), rs.getDouble("t_mcu"), rs.getDouble("v_mcu"), rs.getString("up").trim(), rs.getDouble("rh"),
+						rs.getDouble("v_in"), rs.getDouble("v_a1"), rs.getString("name").trim());
 				
 				listData.add(data);//add data object to the list to be returned
 			}
@@ -250,13 +351,14 @@ public class Database {
 		//Open the database connection
 		database.Open();
 	
-		//Register a new user
-		List<Data> data = database.getGatewayData(1);
+		//Data display
+		/*List<Data> data = database.getAllData();
 		for (int i=0; i< data.size(); i++)
 			System.out.println("ID: " + data.get(i).getId() + " Utimestamp: " + data.get(i).getUtimestamp() + " UT: " + data.get(i).getUt()
 					+ " T: " + data.get(i).getT() + " PS: " + data.get(i).getPs() + " T_MCU: " + data.get(i).getT_mcu() + " V_MCU: " + data.get(i).getV_mcu() 
 					+ " UP: " + data.get(i).getUp() + " RH: " + data.get(i).getRh() + " V_IN: " + data.get(i).getV_in() + " V_A1: " + data.get(i).getV_a1()
-					+ " GatewayID: " + data.get(i).getGateway_id());
+					+ " GatewaName: " + data.get(i).getGatewayName());
+		
 	}*/
 
 }

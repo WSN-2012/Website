@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@ page import="server.*" %>
+<%@ page import="server.*, java.util.List" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -20,15 +20,19 @@
 <%
 boolean usernameExist = false;
 boolean loggedIn = false;
-session.setAttribute("loginFail", false);//to printout error messages in the login page
-User loggedInUser = (User) session.getAttribute(SessionKeys.USER_OBJECT);
+boolean loginfail = false;//to printout error messages in the login page
+User loggedInUser = null;
+loggedInUser = (User) session.getAttribute(SessionKeys.USER_OBJECT);
+List<Data> data = null;
 if(loggedInUser != null){ //user is already logged in
 	loggedIn = true;
+	loginfail = false;
+	data = SQLQueries.getAllData();
 	if(request.getParameter("logout") != null){
 		session.removeAttribute(SessionKeys.USER_OBJECT);
 		session.invalidate();
 		loggedIn = false;
-		session.setAttribute("loginFail", false);
+		loginfail = false;
 	}
 }else{
 	if(request.getParameter("username") !=null &&
@@ -38,12 +42,13 @@ if(loggedInUser != null){ //user is already logged in
 		loggedInUser = SQLQueries.login(request.getParameter("username"), request.getParameter("password"));
 		if (loggedInUser != null) {//user successfully logged in.
 			session.setAttribute(SessionKeys.USER_OBJECT, loggedInUser);
+			data = SQLQueries.getAllData();
 			loggedIn = true;
-			session.setAttribute("loginFail", false);
+			loginfail = false;
 		}
 		else{
-			session.setAttribute("loginFail", true);
-			session.setAttribute("err", "Login Failed! Please check your credentials and try again");
+			loginfail = true;
+			request.setAttribute("err", "Login Failed! Please check your credentials and try again");
 		}
 	}
 }
@@ -94,7 +99,7 @@ if(loggedInUser != null){ //user is already logged in
                      	<%
                      	if(loggedIn){
 	                    %>
-	                     	<p>You are currently logged in.</p>
+	                     	<p><%out.print(loggedInUser.getName()); %>, you are currently logged in.</p>
 	                     	
 	                     	<table id="data_table" summary="Data from WSN">
 								<thead>
@@ -103,39 +108,33 @@ if(loggedInUser != null){ //user is already logged in
 										<th scope="col">UT</th>
 										<th scope="col">ID</th>
 										<th scope="col">T</th>
+										<th scope="col">T_MCU</th>
 										<th scope="col">PS</th>
 										<th scope="col">V_MCU</th>
 										<th scope="col">UP</th>
 										<th scope="col">RH</th>
 										<th scope="col">V_IN</th>
 										<th scope="col">V_A1</th>
+										<th scope="col">Gateway Name</th>
 									</tr>
 								</thead>
 								<tbody>
+								<%for (int i=0; i<data.size();i++){ %>
 									<tr>
-										<td>2012-05-22 13:57:46</td>
-										<td>1337687866</td>
-										<td>283c0cdd030000d7</td>
-										<td>30.44</td>
-										<td>0</td>
-										<td>2.92</td>
-										<td>2BF04</td>
-										<td>42.4</td>
-										<td>4.66</td>
-										<td>3.57</td>
+										<td><% out.print(data.get(i).getUtimestamp()); %></td>
+										<td><% out.print(data.get(i).getUt()); %></td>
+										<td><% out.print(data.get(i).getId()); %></td>
+										<td><% out.print(data.get(i).getT()); %></td>
+										<td><% out.print(data.get(i).getT_mcu()); %></td>
+										<td><% out.print(data.get(i).getPs()); %></td>
+										<td><% out.print(data.get(i).getV_mcu()); %></td>
+										<td><% out.print(data.get(i).getUp()); %></td>
+										<td><% out.print(data.get(i).getRh()); %></td>
+										<td><% out.print(data.get(i).getV_in()); %></td>
+										<td><% out.print(data.get(i).getV_a1()); %></td>
+										<td><% out.print(data.get(i).getGatewayName());%></td>
 									</tr>
-									<tr>
-										<td>2012-05-22 13:57:46</td>
-										<td>1337687866</td>
-										<td>283c0cdd030000d7</td>
-										<td>30.44</td>
-										<td>0</td>
-										<td>2.92</td>
-										<td>2BF04</td>
-										<td>42.4</td>
-										<td>4.66</td>
-										<td>3.57</td>
-									</tr>
+									<%} %>
 								</tbody>
 							</table>
 	                     	
@@ -155,13 +154,9 @@ if(loggedInUser != null){ //user is already logged in
 	
 	                                <input type="submit" class="submit_btn" name="login" id="login" value="Login" />
 	                                <%
-										if(usernameExist){
-									%>
-	                            		<p id="errmsg" style="color: red;">Username already exists! Choose another username and try again.</p>
-	                                <%
-	                                }else if((Boolean)session.getAttribute("loginFail")) {
+	                                	if((request.getAttribute("loginFail")!=null && (Boolean)request.getAttribute("loginFail")) || loginfail){		
 	                                %>
-	                            		<p id="errmsg" style="color: red;">Login Failed! Check your credentials and try again.</p>
+	                            		<p id="errmsg" style="color: red;"><%out.print(request.getAttribute("err"));%></p>
 	                            	<% } %>
 	                            </form>
 							</div>

@@ -21,51 +21,24 @@
 <%
 boolean usernameExist = false;
 boolean loggedIn = false;
-boolean loginfail = false;//to printout message if the user inserts wrong or not existing credentials in login page
-User loggedInUser = (User) session.getAttribute(SessionKeys.USER_OBJECT);
-if(loggedInUser != null){ //user is already logged in
-	loggedIn = true;
-	if(request.getParameter("logout") != null){
-		session.removeAttribute(SessionKeys.USER_OBJECT);
-		session.invalidate();
-		loggedIn = false;
-		loginfail = false;
-	}
-}else{
-	if(request.getParameter("username") !=null &&
-		request.getParameter("password") != null &&
-		request.getParameter("login") !=null &&
-		request.getParameter("login").equals("Login")){ //login has been requested
-		loggedInUser = SQLQueries.login(request.getParameter("username"), request.getParameter("password"));
-		if (loggedInUser != null) {//user successfully logged in.
-			session.setAttribute(SessionKeys.USER_OBJECT, loggedInUser);
-			loggedIn = true;
-			loginfail = false;
-		}
-		else{
-			loginfail=true;
-		}
-	}else if(request.getParameter("author")!=null &&
+//User loggedInUser = (User) session.getAttribute(SessionKeys.USER_OBJECT);
+if(request.getParameter("author")!=null &&
 	request.getParameter("email")!=null &&
 	request.getParameter("username")!=null &&
 	request.getParameter("password")!=null &&
+	request.getParameter("password2")!=null &&
 	request.getParameter("register")!=null &&
 	request.getParameter("register").equals("Register")){
-		if(SQLQueries.usernameExistance(request.getParameter("username"))){
-			usernameExist = true;
-			out.println("<h1>Natty</h1>");
-		}else{
-			loggedInUser = SQLQueries.register(request.getParameter("username"), request.getParameter("password"), request.getParameter("email"), request.getParameter("author"));
-			if(loggedInUser != null){//user successfully registered and logged in.
-				session.setAttribute(SessionKeys.USER_OBJECT, loggedInUser);
-				loggedIn = true;
-				loginfail = false;
-				usernameExist = false;
-			}
-			else{
-				loginfail=true;
-				usernameExist = false;
-			}
+	if(SQLQueries.usernameExistance(request.getParameter("username"))){
+		usernameExist = true;
+		request.setAttribute("err", "Username already exists! Choose another username and try again.");//Display error
+	}else{
+		User loggedInUser = SQLQueries.register(request.getParameter("username"), request.getParameter("password"), request.getParameter("email"), request.getParameter("author"));
+		if(loggedInUser!=null){
+			session.setAttribute(SessionKeys.USER_OBJECT, loggedInUser);
+		}
+		else{
+			request.setAttribute("err", "An error have occured while registering you in the server. Please wait a few minutes and try again!");
 		}
 	}
 }
@@ -102,16 +75,15 @@ if(loggedInUser != null){ //user is already logged in
                 
                     <div class="panel" id="account">
                         <%
-						if(loggedIn){
-						
+						if(session.getAttribute(SessionKeys.USER_OBJECT)!=null){
 							response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
-							String newLocn = "AccountSettings.jsp";
+							String newLocn = "index.jsp";
 							response.setHeader("Location",newLocn);
 
 						}else{
 						%>
 	                        <div id="register_form">
-	                            <form method="post" name="contact" action="index.jsp">
+	                            <form method="post" name="contact" >
 	                                
 	                                <label for="author">Your Name:</label> <input type="text" id="author" name="author" class="required input_field" />
 	                                <div class="cleaner_h10"></div>
@@ -130,11 +102,16 @@ if(loggedInUser != null){ //user is already logged in
 	                                <div class="cleaner_h10"></div>
 	
 	                                <input type="submit" class="submit_btn" name="register" id="register" value="Register" />
-	                            	
+	                                
+	                                <% 
+										if(request.getAttribute("err")!=null){
+									%>
+	                            		<p id="errmsg" style="color: red;"><%out.print(request.getAttribute("err"));%></p>
+	                               
 	                            </form>
 							</div>
 						<%
-							}
+							}}
 						%>
                     </div>
                 

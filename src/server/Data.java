@@ -16,7 +16,7 @@ public class Data {
 	private double rh;
 	private double v_in;
 	private double v_a1;
-	private String gateway_name;
+	private String gatewayName;
 	
 	
 	public Data() {
@@ -25,7 +25,7 @@ public class Data {
 
 	public Data(String id, Date utimestamp, int ut, double t, double ps,
 			double t_mcu, double v_mcu, String up, double rh, double v_in,
-			double v_a1, String gateway_name) {
+			double v_a1, String gatewayName) {
 		super();
 		this.id = id;
 		this.utimestamp = utimestamp;
@@ -38,7 +38,7 @@ public class Data {
 		this.rh = rh;
 		this.v_in = v_in;
 		this.v_a1 = v_a1;
-		this.gateway_name = gateway_name;
+		this.gatewayName = gatewayName;
 	}
 
 	public String getId() {
@@ -129,12 +129,12 @@ public class Data {
 		this.v_a1 = v_a1;
 	}
 
-	public String getGateway_id() {
-		return gateway_name;
+	public String getGatewayName() {
+		return gatewayName;
 	}
 
-	public void setGateway_id(String gateway_name) {
-		this.gateway_name = gateway_name;
+	public void setGatewayName(String gatewayName) {
+		this.gatewayName = gatewayName;
 	}
 	
 	

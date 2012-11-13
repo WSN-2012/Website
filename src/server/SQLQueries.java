@@ -50,6 +50,37 @@ public class SQLQueries {
 
 	}
 	
+	//Change user account settings without password field
+	public static User changeAccountSettings(String name, String oldUsername, String newUsername, String email)
+	{
+		//Create a new database connection
+		Database database = new Database("jdbc:postgresql://localhost:5432/serverdb", "postgres", "1234567890", "org.postgresql.Driver");
+			
+		//Open the database connection
+		database.Open();
+			
+		//call changeAccountSettings method in the DB 
+		User user = database.changeAccountSettings(name, oldUsername, newUsername, email);
+		database.Close();
+		return user;
+	}
+	
+	//Change user account settings with password field
+	public static User changeAccountSettings(String name, String oldUsername, String newUsername, String email, String password)
+	{
+		//Create a new database connection
+		Database database = new Database("jdbc:postgresql://localhost:5432/serverdb", "postgres", "1234567890", "org.postgresql.Driver");
+					
+		//Open the database connection
+		database.Open();
+				
+		//call changeAccountSettings method in the DB 
+		User user = database.changeAccountSettings(name, oldUsername, newUsername, email,password);
+		database.Close();
+		return user;
+	}
+	
+	//Get all WSN data
 	public static List<Data> getAllData()
 	{
 		//Create a new database connection
@@ -77,6 +108,21 @@ public class SQLQueries {
 		List<Gateway> listGateway =  database.getAllGateways();
 		database.Close();
 		return listGateway;
+
+	}
+	
+	public static Gateway getGateway(int gatewayID)
+	{
+		//Create a new database connection
+		Database database = new Database("jdbc:postgresql://localhost:5432/serverdb", "postgres", "1234567890", "org.postgresql.Driver");
+		
+		//Open the database connection
+		database.Open();
+		
+		//Create a list of Data taken from the database
+		Gateway gateway =  database.getGateway(gatewayID);
+		database.Close();
+		return gateway;
 
 	}
 	
