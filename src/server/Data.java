@@ -5,7 +5,6 @@ import java.util.Date;
 
 public class Data {
 	
-	private String id;
 	private Date utimestamp;
 	private int ut;
 	private double t;
@@ -16,18 +15,17 @@ public class Data {
 	private double rh;
 	private double v_in;
 	private double v_a1;
-	private String gatewayName;
+	private String sensorName;
 	
 	
 	public Data() {
 		super();
 	}
 
-	public Data(String id, Date utimestamp, int ut, double t, double ps,
+	public Data(Date utimestamp, int ut, double t, double ps,
 			double t_mcu, double v_mcu, String up, double rh, double v_in,
-			double v_a1, String gatewayName) {
+			double v_a1, String sensorName) {
 		super();
-		this.id = id;
 		this.utimestamp = utimestamp;
 		this.ut = ut;
 		this.t = t;
@@ -38,15 +36,7 @@ public class Data {
 		this.rh = rh;
 		this.v_in = v_in;
 		this.v_a1 = v_a1;
-		this.gatewayName = gatewayName;
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
+		this.sensorName = sensorName;
 	}
 
 	public Date getUtimestamp() {
@@ -129,12 +119,12 @@ public class Data {
 		this.v_a1 = v_a1;
 	}
 
-	public String getGatewayName() {
-		return gatewayName;
+	public String getSensorName() {
+		return sensorName;
 	}
 
-	public void setGatewayName(String gatewayName) {
-		this.gatewayName = gatewayName;
+	public void setSensorName(String sensorName) {
+		this.sensorName = sensorName;
 	}
 	
 	

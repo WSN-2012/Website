@@ -80,21 +80,7 @@ public class SQLQueries {
 		return user;
 	}
 	
-	//Get all WSN data
-	public static List<Data> getAllData()
-	{
-		//Create a new database connection
-		Database database = new Database("jdbc:postgresql://localhost:5432/serverdb", "postgres", "1234567890", "org.postgresql.Driver");
-		
-		//Open the database connection
-		database.Open();
-		
-		//Create a list of Data taken from the database
-		List<Data> listData =  database.getAllData();
-		database.Close();
-		return listData;
-
-	}
+	
 	
 	public static List<Gateway> getAllGateway()
 	{
@@ -106,6 +92,21 @@ public class SQLQueries {
 		
 		//Create a list of Data taken from the database
 		List<Gateway> listGateway =  database.getAllGateways();
+		database.Close();
+		return listGateway;
+
+	}
+	
+	public static List<Sensor> getAllSensor(int gatewayID)
+	{
+		//Create a new database connection
+		Database database = new Database("jdbc:postgresql://localhost:5432/serverdb", "postgres", "1234567890", "org.postgresql.Driver");
+		
+		//Open the database connection
+		database.Open();
+		
+		//Create a list of Data taken from the database
+		List<Sensor> listGateway =  database.getAllSensors(gatewayID);
 		database.Close();
 		return listGateway;
 
@@ -126,7 +127,7 @@ public class SQLQueries {
 
 	}
 	
-	public static List<Data> getGatewayData(int gatewayID)
+	public static List<Data> getSensorData(String sensorID)
 	{
 		//Create a new database connection
 		Database database = new Database("jdbc:postgresql://localhost:5432/serverdb", "postgres", "1234567890", "org.postgresql.Driver");
@@ -135,7 +136,7 @@ public class SQLQueries {
 		database.Open();
 		
 		//Create a list of Data taken from the database
-		List<Data> listData =  database.getGatewayData(gatewayID);
+		List<Data> listData =  database.getSensorData(sensorID);
 		database.Close();
 		return listData;
 

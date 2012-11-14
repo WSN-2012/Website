@@ -233,34 +233,6 @@ public class Database {
 		return null;
 	}
 	
-	public List<Data> getAllData() {
-		try {
-			
-			List<Data> listData = new ArrayList<Data>();
-			// Submit a query, creating a ResultSet object
-			ResultSet rs = statement
-					.executeQuery("select * from wsndata W,gateway G where W.gateway_id = G.id");
-
-			while (rs.next()) {
-				//create data object from resultset
-				Data data = new Data (rs.getString("id").trim(), rs.getTimestamp("utimestamp"), rs.getInt("ut"), rs.getDouble("t"),
-						rs.getDouble("ps"), rs.getDouble("t_mcu"), rs.getDouble("v_mcu"), rs.getString("up").trim(), rs.getDouble("rh"),
-						rs.getDouble("v_in"), rs.getDouble("v_a1"), rs.getString("name").trim());
-				
-				listData.add(data);//add data object to the list to be returned
-				
-			} 
-			rs.close();
-			return listData;
-		} catch (SQLException ex) {
-			while (ex != null) {
-				System.out.println("SQL Exception:  " + ex.getMessage());
-				ex.printStackTrace();
-				ex = ex.getNextException();
-			}
-		}
-		return null;
-	}
 	
 	public List<Gateway> getAllGateways() {
 		try {
@@ -277,6 +249,34 @@ public class Database {
 				Gateway gateway = new Gateway(id, name, publicity);
 				
 				listGateway.add(gateway);	
+			}
+			
+			rs.close();
+			return listGateway;
+		} catch (SQLException ex) {
+			while (ex != null) {
+				System.out.println("SQL Exception:  " + ex.getMessage());
+				ex = ex.getNextException();
+			}
+		}
+		return null;
+	}
+	
+	public List<Sensor> getAllSensors(int gatewayID) {
+		try {
+			
+			List<Sensor> listGateway = new ArrayList<Sensor>();
+			// Submit a query, creating a ResultSet object
+			ResultSet rs = statement
+					.executeQuery("select * from sensor where gateway_id = " + gatewayID );
+
+			while (rs.next()) {
+				String id = rs.getString("id").trim();
+				String name = rs.getString("name").trim();
+				int gatewayId = rs.getInt("gateway_id");
+				Sensor sensor = new Sensor(id, name, gatewayId);
+				
+				listGateway.add(sensor);	
 			}
 			
 			rs.close();
@@ -316,16 +316,16 @@ public class Database {
 		return null;
 	}
 	
-	public List<Data> getGatewayData(int gatewayID) {
+	public List<Data> getSensorData(String sensorID) {
 		try {
 			
 			List<Data> listData = new ArrayList<Data>();
 			// Submit a query, creating a ResultSet object
 			ResultSet rs = statement
-					.executeQuery("select * from wsndata,gateway where gateway_id = " + gatewayID);
+					.executeQuery("select * from wsndata W, sensor S where W.id = '" + sensorID + "' AND S.id = '" + sensorID + "'");
 
 			while (rs.next()) {
-				Data data = new Data (rs.getString("id").trim(), rs.getTimestamp("utimestamp"), rs.getInt("ut"), rs.getDouble("t"),
+				Data data = new Data (rs.getTimestamp("utimestamp"), rs.getInt("ut"), rs.getDouble("t"),
 						rs.getDouble("ps"), rs.getDouble("t_mcu"), rs.getDouble("v_mcu"), rs.getString("up").trim(), rs.getDouble("rh"),
 						rs.getDouble("v_in"), rs.getDouble("v_a1"), rs.getString("name").trim());
 				

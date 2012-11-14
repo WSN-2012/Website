@@ -30,14 +30,14 @@ public class HTTPServlet extends HttpServlet {
 			String jsonGateway = "";
 			
 			if(request.getParameter("getGateways")!=null){//if gateways is requested
-				
 				List<Gateway> listGateway = SQLQueries.getAllGateway();//Get Gateway info from DB
 				jsonGateway = gson.toJson(listGateway);//convert list to json String
-			}else if(request.getParameter("gateway")!=null){//if data for a specific gateway is requested
-				
-				String[] gatewayValue = request.getParameterValues("gateway");
-				int gatewayID = Integer.parseInt(gatewayValue[0]);
-				List<Data> listGatewayData= SQLQueries.getGatewayData(gatewayID);//Get Data info based on one gateway from DB
+			}else if(request.getParameter("gateway")!=null && request.getParameter("getSensors")!=null){//if gateways is requested
+				int gatewayValue = Integer.parseInt(request.getParameter("gateway"));
+				List<Sensor> listSensor = SQLQueries.getAllSensor(gatewayValue);//Get Gateway info from DB
+				jsonGateway = gson.toJson(listSensor);//convert list to json String
+			}else if(request.getParameter("sensor")!=null){//if data for a specific gateway is requested
+				List<Data> listGatewayData= SQLQueries.getSensorData(request.getParameter("sensor"));//Get Data info based on one gateway from DB
 				jsonGateway = gson.toJson(listGatewayData);//convert list to json String
 			}
 			response.setContentLength(jsonGateway.length());
