@@ -1,6 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@ page import="server.*, java.util.*, javax.mail.*, javax.mail.internet.*, javax.activation.*" %>
+<%@ page import="server.*" %>
+<%@ page import="java.io.*,java.util.*,javax.mail.*"%>
+<%@ page import="javax.mail.internet.*,javax.activation.*"%>
+<%@ page import="javax.servlet.http.*,javax.servlet.*;" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -8,7 +11,6 @@
 <link href="css/template_style.css" rel="stylesheet" type="text/css" />
 <link href="css/coda-slider.css" rel="stylesheet" type="text/css" media="screen" charset="utf-8" />
 <script src="js/jquery-1.2.6.js" type="text/javascript"></script>
-<!--  <script src="js/jquery.scrollTo-1.3.3.js" type="text/javascript"></script>
 <script src="js/jquery.localscroll-1.2.5.js" type="text/javascript" charset="utf-8"></script>
 <script src="js/jquery.serialScroll-1.2.1.js" type="text/javascript" charset="utf-8"></script>-->
 <script src="js/coda-slider.js" type="text/javascript" charset="utf-8"></script>
@@ -29,38 +31,45 @@ if(loggedInUser != null){ //user is already logged in
 }
 if(request.getParameter("sendEmail")!=null &&
 request.getParameter("sendEmail").equals("Send")){
-	String to = "nataliparats@gmail.com";//Recipient's email ID needs to be mentioned.
-	String from = "wentfgjwnwo@gmail.com";// Sender's email ID needs to be mentioned
-	String host = "localhost";// Assuming you are sending email from localhost
-	Properties properties = System.getProperties();// Get system properties
-	properties.setProperty("mail.smtp.host", host);//Setup mail server
-	
-	// Get the default Session object.
-	Session s = Session.getDefaultInstance(properties);
-	
-	try{
-	   // Create a default MimeMessage object.
-	   MimeMessage message = new MimeMessage(s);
-	
-	   // Set From: header field of the header.
-	   message.setFrom(new InternetAddress(from));
-	
-	   // Set To: header field of the header.
-	   message.addRecipient(Message.RecipientType.TO,
-	                            new InternetAddress(to));
-	
-	   // Set Subject: header field
-	   message.setSubject("This is the Subject Line!");
-	
-	   // Now set the actual message
-	   message.setText("This is actual message");
-	
-	   // Send message
-	   Transport.send(message);
-	   System.out.println("Sent message successfully....");
-	}catch (MessagingException mex) {
-	   mex.printStackTrace();
+	String host="", user="", pass="";
+	host ="smtp.gmail.com"; //"smtp.gmail.com";
+	user ="kozzetest"; // gmail id to send the emails
+	pass ="kostas01"; //Your gmail password
+	String SSL_FACTORY = "javax.net.ssl.SSLSocketFactory";
+	String to ="natpar@kth.se"; // out going email id
+	String from =request.getParameter("email"); //Email id of the recipient
+	String subject = request.getParameter("name") + " WSN web contact page";//Subject
+	String messageText =request.getParameter("text");//Message to be sent
+	boolean sessionDebug = true;
+
+	Properties props = System.getProperties();
+	props.put("mail.host", host);
+	props.put("mail.transport.protocol.", "smtp");
+	props.put("mail.smtp.auth", "true");
+	props.put("mail.smtp.", "true");
+	props.put("mail.smtp.port", "465");
+	props.put("mail.smtp.socketFactory.fallback", "false");
+	props.put("mail.smtp.socketFactory.class", SSL_FACTORY);
+	Session mailSession = Session.getDefaultInstance(props, null);
+	mailSession.setDebug(sessionDebug);
+	Message msg = new MimeMessage(mailSession);
+	msg.setFrom(new InternetAddress(from));
+	InternetAddress[] address = {new InternetAddress(to)};
+	msg.setRecipients(Message.RecipientType.TO, address);
+	msg.setSubject(subject);
+	msg.setContent(messageText, "text/html"); // use setText if you want to send text
+	Transport transport = mailSession.getTransport("smtp");
+	transport.connect(host, user, pass);
+	try {
+	transport.sendMessage(msg, msg.getAllRecipients());
+
+	out.println("message successfully sended"); // assume it was sent
 	}
+	catch (Exception err) {
+
+	out.println("message not successfully sended"); // assume it’s a fail
+	}
+	transport.close();
 }
 %>
 
@@ -103,7 +112,7 @@ request.getParameter("sendEmail").equals("Send")){
                         <div id="contact_form">
                             <form method="post" name="contact" action="#contactus">
                                 
-                                <label for="author">Your Name:</label> <input type="text" id="author" name="author" class="required input_field" />
+                                <label for="name">Your Name:</label> <input type="text" id="name" name="name" class="required input_field" />
                                 <div class="cleaner_h10"></div>
                                 
                                 <label for="email">Your Email:</label> <input type="text" id="email" name="email" class="validate-email required input_field" />
