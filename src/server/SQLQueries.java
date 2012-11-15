@@ -141,4 +141,33 @@ public class SQLQueries {
 		return listData;
 
 	}
+	
+	public static List<Data> getAllData()
+	{
+		//Create a new database connection
+		Database database = new Database("jdbc:postgresql://localhost:5432/serverdb", "postgres", "1234567890", "org.postgresql.Driver");
+		
+		//Open the database connection
+		database.Open();
+		
+		//Create a list of Data taken from the database
+		List<Data> listData =  database.getAllData();
+		database.Close();
+		return listData;
+
+	}
+	
+	public static void setData(String id, Data data)
+	{
+		//Create a new database connection
+		Database database = new Database("jdbc:postgresql://localhost:5432/serverdb", "postgres", "1234567890", "org.postgresql.Driver");
+		
+		//Open the database connection
+		database.Open();
+		
+		//Create a list of Data taken from the database
+		database.setData(id, data);
+		database.Close();
+
+	}
 }

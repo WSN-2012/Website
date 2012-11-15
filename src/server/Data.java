@@ -1,12 +1,13 @@
 package server;
 
+import java.math.BigInteger;
 import java.util.Date;
 
 
 public class Data {
 	
 	private Date utimestamp;
-	private int ut;
+	private BigInteger ut;
 	private double t;
 	private double ps;
 	private double t_mcu;
@@ -14,7 +15,6 @@ public class Data {
 	private String up;
 	private double rh;
 	private double v_in;
-	private double v_a1;
 	private String sensorName;
 	
 	
@@ -22,9 +22,8 @@ public class Data {
 		super();
 	}
 
-	public Data(Date utimestamp, int ut, double t, double ps,
-			double t_mcu, double v_mcu, String up, double rh, double v_in,
-			double v_a1, String sensorName) {
+	public Data(Date utimestamp, BigInteger ut, double t, double ps,
+			double t_mcu, double v_mcu, String up, double rh, double v_in, String sensorName) {
 		super();
 		this.utimestamp = utimestamp;
 		this.ut = ut;
@@ -35,7 +34,6 @@ public class Data {
 		this.up = up;
 		this.rh = rh;
 		this.v_in = v_in;
-		this.v_a1 = v_a1;
 		this.sensorName = sensorName;
 	}
 
@@ -47,11 +45,11 @@ public class Data {
 		this.utimestamp = utimestamp;
 	}
 
-	public int getUt() {
+	public BigInteger getUt() {
 		return ut;
 	}
 
-	public void setUt(int ut) {
+	public void setUt(BigInteger ut) {
 		this.ut = ut;
 	}
 
@@ -109,14 +107,6 @@ public class Data {
 
 	public void setV_in(double v_in) {
 		this.v_in = v_in;
-	}
-
-	public double getV_a1() {
-		return v_a1;
-	}
-
-	public void setV_a1(double v_a1) {
-		this.v_a1 = v_a1;
 	}
 
 	public String getSensorName() {

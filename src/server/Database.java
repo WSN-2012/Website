@@ -1,5 +1,6 @@
 package server;
 
+import java.math.BigInteger;
 import java.sql.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -136,7 +137,7 @@ public class Database {
 	
 	//Check if username already exists in the DB
 	public boolean exist(String username) {
-		boolean exist = false;//indicate that username exists in DB
+		boolean exist = false;//indicate that username does not exist in DB
 		try {
 			
 			// Submit a query, creating a ResultSet object
@@ -316,6 +317,7 @@ public class Database {
 		return null;
 	}
 	
+	//get all data related with a specific sensor
 	public List<Data> getSensorData(String sensorID) {
 		try {
 			
@@ -325,9 +327,9 @@ public class Database {
 					.executeQuery("select * from wsndata W, sensor S where W.id = '" + sensorID + "' AND S.id = '" + sensorID + "'");
 
 			while (rs.next()) {
-				Data data = new Data (rs.getTimestamp("utimestamp"), rs.getInt("ut"), rs.getDouble("t"),
+				Data data = new Data (rs.getTimestamp("utimestamp"), new BigInteger(Integer.valueOf(rs.getInt("ut")).toString()), rs.getDouble("t"),
 						rs.getDouble("ps"), rs.getDouble("t_mcu"), rs.getDouble("v_mcu"), rs.getString("up").trim(), rs.getDouble("rh"),
-						rs.getDouble("v_in"), rs.getDouble("v_a1"), rs.getString("name").trim());
+						rs.getDouble("v_in"), rs.getString("name").trim());
 				
 				listData.add(data);//add data object to the list to be returned
 			}
@@ -343,6 +345,140 @@ public class Database {
 		return null;
 	}
 	
+	//get all data from table
+	public List<Data> getAllData() {
+		try {
+			
+			List<Data> listData = new ArrayList<Data>();
+			// Submit a query, creating a ResultSet object
+			ResultSet rs = statement
+					.executeQuery("select * from wsndata W, sensor S where W.id = S.id ");
+
+			while (rs.next()) {
+				Data data = new Data (rs.getTimestamp("utimestamp"), new BigInteger(Integer.valueOf(rs.getInt("ut")).toString()), rs.getDouble("t"),
+						rs.getDouble("ps"), rs.getDouble("t_mcu"), rs.getDouble("v_mcu"), rs.getString("up").trim(), rs.getDouble("rh"),
+						rs.getDouble("v_in"), rs.getString("name").trim());
+				
+				listData.add(data);//add data object to the list to be returned
+			}
+			
+			rs.close();
+			return listData;
+		} catch (SQLException ex) {
+			while (ex != null) {
+				System.out.println("SQL Exception:  " + ex.getMessage());
+				ex = ex.getNextException();
+			}
+		}
+		return null;
+	}
+	
+	//Check if specific data already exists in the DB
+	public boolean duplicateRecord(String id, BigInteger ut) {
+		boolean exist = false;//indicate that no such record exists in DB
+		try {
+				
+			// Submit a query, creating a ResultSet object
+			ResultSet rs = statement
+					.executeQuery("select * from wsndata where id = '"
+							+ id + "' AND ut=" +ut);
+
+			if (rs.next()) {
+				exist = true;
+			} 
+			
+			rs.close();
+			return exist;
+				
+		} catch (SQLException ex) {
+			while (ex != null) {
+				System.out.println("SQL Exception:  " + ex.getMessage());
+				ex.printStackTrace();
+				ex = ex.getNextException();
+			}
+		}
+		return exist;
+	}
+	
+	//Check if sensor already exists in the DB
+	public boolean duplicateSensor(String id) {
+		boolean exist = false;//indicate that no such record exists in DB
+		try {
+					
+			// Submit a query, creating a ResultSet object
+			ResultSet rs = statement
+					.executeQuery("select * from sensor where id = '"
+							+ id + "'");
+
+			if (rs.next()) {
+				exist = true;
+			} 
+				
+			rs.close();
+			return exist;
+					
+		} catch (SQLException ex) {
+			while (ex != null) {
+				System.out.println("SQL Exception:  " + ex.getMessage());
+				ex.printStackTrace();
+				ex = ex.getNextException();
+			}
+		}
+		return exist;
+	}
+	
+	//set data to the database 
+	//TODO get gateway name and id gateway
+	public void setSensor(String id) {
+		if(!duplicateSensor(id)){
+			try {
+				// Submit a query, creating a ResultSet object
+				statement.executeUpdate("insert into sensor values('" + id + "', 'garden', 2)");
+			} catch (SQLException ex) {
+				while (ex != null) {
+					System.out.println("SQL Exception:  " + ex.getMessage());
+					ex.printStackTrace();
+					ex = ex.getNextException();
+				}
+			}
+		}
+	}
+	
+	//set data to the database 
+	public void setData(String id, Data data) {
+		
+		//set the sensor in the sensor table if it does not exist
+		setSensor(id);
+		
+		if(!duplicateRecord(id, data.getUt())){
+			try {
+				// Submit a query, creating a ResultSet object
+				statement
+						.executeUpdate("INSERT INTO wsndata VALUES "
+										+ "('" + id 
+										+ "', '" + data.getUtimestamp()
+										+ "', " + (data.getUt().equals(4.94065645841246544e-324d) ? null : data.getUt())
+										+ ", " + (data.getT()==4.94065645841246544e-324d ? null : data.getT())
+										+ ", " + (data.getPs()==4.94065645841246544e-324d ? null : data.getPs())
+										+ ", " + (data.getT_mcu()==4.94065645841246544e-324d ? null : data.getT_mcu())
+										+ ", " + (data.getV_mcu()==4.94065645841246544e-324d ? null : data.getV_mcu())
+										+ ", '" + data.getUp()
+										+ "', " + (data.getRh()==4.94065645841246544e-324d ? null : data.getRh())
+										+ ", " + (data.getV_in()==4.94065645841246544e-324d ? null : data.getV_in())
+										+ ")");
+	
+			} catch (SQLException ex) {
+				while (ex != null) {
+					System.out.println("SQL Exception:  " + ex.getMessage());
+					ex.printStackTrace();
+					ex = ex.getNextException();
+				}
+			}
+		}
+	}
+	
+	
+	
 	//Static Test of database
 	/*public static void main(String args[]){
 		//Create a new database connection
@@ -352,12 +488,12 @@ public class Database {
 		database.Open();
 	
 		//Data display
-		/*List<Data> data = database.getAllData();
+		List<Data> data = database.getAllData();
 		for (int i=0; i< data.size(); i++)
-			System.out.println("ID: " + data.get(i).getId() + " Utimestamp: " + data.get(i).getUtimestamp() + " UT: " + data.get(i).getUt()
+			System.out.println("Utimestamp: " + data.get(i).getUtimestamp() + " UT: " + data.get(i).getUt()
 					+ " T: " + data.get(i).getT() + " PS: " + data.get(i).getPs() + " T_MCU: " + data.get(i).getT_mcu() + " V_MCU: " + data.get(i).getV_mcu() 
-					+ " UP: " + data.get(i).getUp() + " RH: " + data.get(i).getRh() + " V_IN: " + data.get(i).getV_in() + " V_A1: " + data.get(i).getV_a1()
-					+ " GatewaName: " + data.get(i).getGatewayName());
+					+ " UP: " + data.get(i).getUp() + " RH: " + data.get(i).getRh() + " V_IN: " + data.get(i).getV_in() 
+					+ " GatewaName: " + data.get(i).getSensorName());
 		
 	}*/
 

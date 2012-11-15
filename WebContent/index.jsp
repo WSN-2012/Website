@@ -106,7 +106,6 @@ if(loggedInUser != null){ //user is already logged in
 									<tr>
 										<th scope="col">Timestamp</th>
 										<th scope="col">UT</th>
-										<th scope="col">ID</th>
 										<th scope="col">T</th>
 										<th scope="col">T_MCU</th>
 										<th scope="col">PS</th>
@@ -114,7 +113,6 @@ if(loggedInUser != null){ //user is already logged in
 										<th scope="col">UP</th>
 										<th scope="col">RH</th>
 										<th scope="col">V_IN</th>
-										<th scope="col">V_A1</th>
 										<th scope="col">Gateway Name</th>
 									</tr>
 								</thead>
@@ -123,7 +121,6 @@ if(loggedInUser != null){ //user is already logged in
 									<tr>
 										<td><% out.print(data.get(i).getUtimestamp()); %></td>
 										<td><% out.print(data.get(i).getUt()); %></td>
-										<td><% out.print(data.get(i).getId()); %></td>
 										<td><% out.print(data.get(i).getT()); %></td>
 										<td><% out.print(data.get(i).getT_mcu()); %></td>
 										<td><% out.print(data.get(i).getPs()); %></td>
@@ -131,8 +128,7 @@ if(loggedInUser != null){ //user is already logged in
 										<td><% out.print(data.get(i).getUp()); %></td>
 										<td><% out.print(data.get(i).getRh()); %></td>
 										<td><% out.print(data.get(i).getV_in()); %></td>
-										<td><% out.print(data.get(i).getV_a1()); %></td>
-										<td><% out.print(data.get(i).getGatewayName());%></td>
+										<td><% out.print(data.get(i).getSensorName());%></td>
 									</tr>
 									<%} %>
 								</tbody>
