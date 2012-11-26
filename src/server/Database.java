@@ -291,31 +291,6 @@ public class Database {
 		return null;
 	}
 	
-	public Gateway getGateway(int gatewayID) {
-		try {
-			
-			Gateway gateway = null;
-			// Submit a query, creating a ResultSet object
-			ResultSet rs = statement
-					.executeQuery("select * from gateway where id = " +gatewayID);
-
-			while (rs.next()) {
-				int id = rs.getInt("id");
-				String name = rs.getString("name").trim();
-				boolean publicity = rs.getBoolean("publicity");
-				gateway = new Gateway(id, name, publicity);
-			}
-			
-			rs.close();
-			return gateway;
-		} catch (SQLException ex) {
-			while (ex != null) {
-				System.out.println("SQL Exception:  " + ex.getMessage());
-				ex = ex.getNextException();
-			}
-		}
-		return null;
-	}
 	
 	//get all data related with a specific sensor
 	public List<Data> getSensorData(String sensorID) {
@@ -400,6 +375,115 @@ public class Database {
 		return exist;
 	}
 	
+	//Check if gateway already exists in the DB
+	public boolean duplicateGateway(String name) {
+		boolean exist = false;//indicate that no such record exists in DB
+		try {
+						
+			// Submit a query, creating a ResultSet object
+			ResultSet rs = statement
+					.executeQuery("select * from gateway where name = '"
+							+ name + "'");
+
+			if (rs.next()) {
+				exist = true;
+			} 
+					
+			rs.close();
+			return exist;
+						
+		} catch (SQLException ex) {
+			while (ex != null) {
+				System.out.println("SQL Exception:  " + ex.getMessage());
+				ex.printStackTrace();
+				ex = ex.getNextException();
+				}
+		}
+		return exist;
+	}
+	
+	public Gateway getGateway(int gatewayID) {
+		try {
+			
+			Gateway gateway = null;
+			// Submit a query, creating a ResultSet object
+			ResultSet rs = statement
+					.executeQuery("select * from gateway where id = " +gatewayID);
+
+			while (rs.next()) {
+				int id = rs.getInt("id");
+				String name = rs.getString("name").trim();
+				boolean publicity = rs.getBoolean("publicity");
+				gateway = new Gateway(id, name, publicity);
+			}
+			
+			rs.close();
+			return gateway;
+		} catch (SQLException ex) {
+			while (ex != null) {
+				System.out.println("SQL Exception:  " + ex.getMessage());
+				ex = ex.getNextException();
+			}
+		}
+		return null;
+	}
+	
+	public Gateway getGateway(String gatewayName) {
+		try {
+			
+			Gateway gateway = null;
+			// Submit a query, creating a ResultSet object
+			ResultSet rs = statement
+					.executeQuery("select * from gateway where name = '" +gatewayName +"'");
+
+			while (rs.next()) {
+				int id = rs.getInt("id");
+				String name = rs.getString("name").trim();
+				boolean publicity = rs.getBoolean("publicity");
+				gateway = new Gateway(id, name, publicity);
+			}
+			
+			rs.close();
+			return gateway;
+		} catch (SQLException ex) {
+			while (ex != null) {
+				System.out.println("SQL Exception:  " + ex.getMessage());
+				ex = ex.getNextException();
+			}
+		}
+		return null;
+	}
+		
+	//set gateway to the database 
+	public Gateway setGateway(String name) {
+		Gateway gateway = null;
+		int gatewayID=0;
+		ResultSet rs;
+		try {
+			if(!duplicateGateway(name)){
+					//take the last getawayID 
+					rs = statement.executeQuery("select MAX(id) as id from gateway");
+					while (rs.next()) {
+						gatewayID = rs.getInt("id");
+					}
+					// Submit a query, creating a ResultSet object
+					statement.executeUpdate("insert into gateway values(" + (++gatewayID) + ", '" + name + "', true)");
+					rs.close();
+				}
+				gateway = getGateway(name);
+					
+				return gateway;
+		} catch (SQLException ex) {
+			while (ex != null) {
+				System.out.println("SQL Exception:  " + ex.getMessage());
+				ex.printStackTrace();
+				ex = ex.getNextException();
+			}
+		}
+		
+		return gateway;
+	}
+	
 	//Check if sensor already exists in the DB
 	public boolean duplicateSensor(String id) {
 		boolean exist = false;//indicate that no such record exists in DB
@@ -428,27 +512,36 @@ public class Database {
 	}
 	
 	//set data to the database 
-	//TODO get gateway name and id gateway
-	public void setSensor(String id) {
-		if(!duplicateSensor(id)){
-			try {
+	public Sensor setSensor(String sensorID, String gatewayName) {
+		Sensor sensor = null;
+		try {
+			if(!duplicateSensor(sensorID)){
+				Gateway gateway = getGateway(gatewayName);
 				// Submit a query, creating a ResultSet object
-				statement.executeUpdate("insert into sensor values('" + id + "', 'garden', 2)");
-			} catch (SQLException ex) {
-				while (ex != null) {
-					System.out.println("SQL Exception:  " + ex.getMessage());
-					ex.printStackTrace();
-					ex = ex.getNextException();
-				}
+				statement.executeUpdate("insert into sensor values('" + sensorID + "', 'garden', " + gateway.getId() + ")");
+			}
+			ResultSet rs = statement
+					.executeQuery("select * from sensor where id = '" + sensorID + "'");
+
+			while (rs.next()) {
+				sensor = new Sensor(rs.getString("id"), rs.getString("name"), rs.getInt("gateway_id"));
+			}
+				
+			rs.close();
+			return sensor;
+		} catch (SQLException ex) {
+			while (ex != null) {
+				System.out.println("SQL Exception:  " + ex.getMessage());
+				ex.printStackTrace();
+				ex = ex.getNextException();
 			}
 		}
+		
+		return sensor;
 	}
 	
 	//set data to the database 
 	public void setData(String id, Data data) {
-		
-		//set the sensor in the sensor table if it does not exist
-		setSensor(id);
 		
 		if(!duplicateRecord(id, data.getUt())){
 			try {

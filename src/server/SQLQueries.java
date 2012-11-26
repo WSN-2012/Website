@@ -127,6 +127,36 @@ public class SQLQueries {
 
 	}
 	
+	public static Gateway setGateway(String gatewayName)
+	{
+		//Create a new database connection
+		Database database = new Database("jdbc:postgresql://localhost:5432/serverdb", "postgres", "1234567890", "org.postgresql.Driver");
+		
+		//Open the database connection
+		database.Open();
+		
+		//Create a list of Data taken from the database
+		Gateway gateway =  database.setGateway(gatewayName);
+		database.Close();
+		return gateway;
+
+	}
+	
+	public static Sensor setSensor(String sensorID, String gatewayID)
+	{
+		//Create a new database connection
+		Database database = new Database("jdbc:postgresql://localhost:5432/serverdb", "postgres", "1234567890", "org.postgresql.Driver");
+		
+		//Open the database connection
+		database.Open();
+		
+		//Create a list of Data taken from the database
+		Sensor sensor =  database.setSensor(sensorID, gatewayID);
+		database.Close();
+		return sensor;
+
+	}
+	
 	public static List<Data> getSensorData(String sensorID)
 	{
 		//Create a new database connection
