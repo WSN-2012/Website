@@ -12,9 +12,10 @@
 <link href="css/coda-slider.css" rel="stylesheet" type="text/css" media="screen" charset="utf-8" />
 <script src="js/jquery-1.2.6.js" type="text/javascript"></script>
 <script src="js/jquery.localscroll-1.2.5.js" type="text/javascript" charset="utf-8"></script>
-<script src="js/jquery.serialScroll-1.2.1.js" type="text/javascript" charset="utf-8"></script>-->
+<script src="js/jquery.serialScroll-1.2.1.js" type="text/javascript" charset="utf-8"></script>
 <script src="js/coda-slider.js" type="text/javascript" charset="utf-8"></script>
 <script src="js/jquery.easing.1.3.js" type="text/javascript" charset="utf-8"></script>
+<script src="http://code.jquery.com/jquery-latest.js"></script>
 <title>WSN Server - Contact us</title>
 </head>
 <body>
@@ -84,29 +85,42 @@ request.getParameter("sendEmail").equals("Send")){
         </a>
          <!-- end of header -->
         
-        <ul class="navigation">
-            <li><a href="index.jsp">Home<span class="ui_icon home"></span></a></li>
-            <li><a href="#account"><%if(loggedIn)%>Account Settings<span class="ui_icon aboutus"></span><%else%>Sign Up<span class="ui_icon aboutus"></span></a></li>
-            <li><a href="#config">Server Configuration<span class="ui_icon services"></span></a></li>
-            <li><a href="ContactUs.jsp" lang="selected">Contact Us<span class="ui_icon contactus"></span></a></li>
-        </ul>
+       <ul class="navigation">
+				<li><a href="<%= response.encodeURL("index.jsp")%>">Home<span
+						class="ui_icon home"></span></a></li>
+				<%
+					if (loggedIn) {
+				%>
+				<li><a href="<%= response.encodeURL("AccountSettings.jsp")%>">Account Settings<span
+						class="ui_icon aboutus"></span></a></li>
+				<%
+					} else {
+				%>
+				<li><a href="<%= response.encodeURL("Register.jsp")%>">Sign Up<span
+						class="ui_icon aboutus"></span></a></li>
+				<%
+					}
+				%>
+				<li><a href="<%= response.encodeURL("ServerConfig.jsp")%>">Server Configuration<span
+						class="ui_icon services"></span></a></li>
+				<li><a href="<%= response.encodeURL("ContactUs.jsp")%>" lang="selected">Contact Us<span
+						class="ui_icon contactus"></span></a></li>
+			</ul>
     </div> <!-- end of sidebar -->
 
 	<div id="templatemo_main">
     	        
         <div id="content">
-        
-        <%if(loggedIn){%>
-        					<div id="logout">
-            				<form method="post" name="contact" action="index.jsp">
-            				<input type="submit" name="logout" id="logout" value="Logout" />
-            				</form>
-            				</div>
-            <%}%>
-                	
             <div class="scroll">
                 <div class="scrollContainer">
-                
+	                <%if(loggedIn){%>
+	        					<div id="logout">
+	            				<form method="post" name="contact" action="<%= response.encodeURL("index.jsp")%>">
+	            				<input type="submit" name="logout" id="logout" value="Logout" />
+	            				</form>
+	            				</div>
+	            	<%}%>
+                	
                     <div class="panel" id="contactus">
                         <h1>Feel free to send us a message</h1>
                         <div id="contact_form">

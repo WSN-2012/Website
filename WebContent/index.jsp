@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ page import="server.*, database.*, java.util.*"%>
+<%@ page session="true" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -10,12 +11,11 @@
 <link href="css/coda-slider.css" rel="stylesheet" type="text/css"
 	media="screen" charset="utf-8" />
 <script src="js/jquery-1.2.6.js" type="text/javascript"></script>
-<!-- <script src="js/jquery.scrollTo-1.3.3.js" type="text/javascript"></script>
 <script src="js/jquery.localscroll-1.2.5.js" type="text/javascript" charset="utf-8"></script>
-<script src="js/jquery.serialScroll-1.2.1.js" type="text/javascript" charset="utf-8"></script>-->
+<script src="js/jquery.serialScroll-1.2.1.js" type="text/javascript" charset="utf-8"></script>
 <script src="js/coda-slider.js" type="text/javascript" charset="utf-8"></script>
-<script src="js/jquery.easing.1.3.js" type="text/javascript"
-	charset="utf-8"></script>
+<script src="js/jquery.easing.1.3.js" type="text/javascript" charset="utf-8"></script>
+<script src="http://code.jquery.com/jquery-latest.js"></script>
 </head>
 <body>
 	<%
@@ -63,26 +63,25 @@
 				<div id="wsn_header"></div>
 			</a>
 			<!-- end of header -->
-
 			<ul class="navigation">
-				<li><a href="index.jsp" lang="selected">Home<span
+				<li><a href="<%= response.encodeURL("index.jsp")%>" lang="selected">Home<span
 						class="ui_icon home"></span></a></li>
 				<%
 					if (loggedIn) {
 				%>
-				<li><a href="AccountSettings.jsp">Account Settings<span
+				<li><a href="<%= response.encodeURL("AccountSettings.jsp")%>">Account Settings<span
 						class="ui_icon aboutus"></span></a></li>
 				<%
 					} else {
 				%>
-				<li><a href="Register.jsp">Sign Up<span
+				<li><a href="<%= response.encodeURL("Register.jsp")%>">Sign Up<span
 						class="ui_icon aboutus"></span></a></li>
 				<%
 					}
 				%>
-				<li><a href="ServerConfig.jsp">Server Configuration<span
+				<li><a href="<%= response.encodeURL("ServerConfig.jsp")%>">Server Configuration<span
 						class="ui_icon services"></span></a></li>
-				<li><a href="ContactUs.jsp">Contact Us<span
+				<li><a href="<%= response.encodeURL("ContactUs.jsp")%>">Contact Us<span
 						class="ui_icon contactus"></span></a></li>
 			</ul>
 		</div>
@@ -92,19 +91,15 @@
 			<div id="content">
 				<div class="scroll">
 					<div class="scrollContainer">
+						<!-- if user is logged in display logout button -->
+								<%if (loggedIn) {%>
+								<div id="logout">
+									<form method="post" name="contact" action="<%= response.encodeURL("index.jsp")%>">
+										<input type="submit" name="logout" id="logout" value="Logout" />
+									</form>
+								</div>
+								<%}%>
 						<div class="panel" id="home">
-							<!-- if user is logged in display logout button -->
-							<%
-								if (loggedIn) {
-							%>
-							<div id="logout">
-								<form method="post" name="contact" action="index.jsp">
-									<input type="submit" name="logout" id="logout" value="Logout" />
-								</form>
-							</div>
-							<%
-								}
-							%>
 							<h1>Welcome to the WSN Fall 2012 website!</h1>
 							<p>
 								This is the interface to the web server where all data collected
@@ -124,7 +119,7 @@
 								%>, you are currently logged
 								in.
 							</p>
-							<form method="get" name="form_gateway" action="">
+							<form method="post" name="form_gateway" action="<%= response.encodeURL("index.jsp")%>">
 								<!-- display gateway list -->
 								<label for="gateways">Gateways</label>
 								<select name="gateways"
@@ -256,7 +251,7 @@
 							<p>Access to stored data is restricted! Please login.</p>
 
 							<div id="contact_form">
-								<form method="post" name="contact" action="index.jsp">
+								<form method="post" name="contact" action="<%= response.encodeURL("index.jsp")%>">
 
 									<label for="username">Username:</label> <input type="text"
 										id="username" name="username" class="required input_field" />
@@ -308,8 +303,6 @@
 			Copyright © 2012 <a href="#">WSN team Fall 2012</a>
 
 		</div>
-		<!-- end of templatemo_footer -->
-
 	</div>
 	<!-- end of main -->
 	</div>

@@ -7,16 +7,16 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Register</title>
+<title>WSN Server - Account Settings</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link href="css/template_style.css" rel="stylesheet" type="text/css" />
 <link href="css/coda-slider.css" rel="stylesheet" type="text/css" media="screen" charset="utf-8" />
 <script src="js/jquery-1.2.6.js" type="text/javascript"></script>
-<!-- <script src="js/jquery.scrollTo-1.3.3.js" type="text/javascript"></script>
 <script src="js/jquery.localscroll-1.2.5.js" type="text/javascript" charset="utf-8"></script>
 <script src="js/jquery.serialScroll-1.2.1.js" type="text/javascript" charset="utf-8"></script>-->
 <script src="js/coda-slider.js" type="text/javascript" charset="utf-8"></script>
 <script src="js/jquery.easing.1.3.js" type="text/javascript" charset="utf-8"></script>
+<script src="http://code.jquery.com/jquery-latest.js"></script>
 </head>
 
 <body>
@@ -72,31 +72,42 @@ if(loggedInUser != null){ //user is already logged in
          <!-- end of header -->
         
         <ul class="navigation">
-            <li><a href="index.jsp">Home<span class="ui_icon home"></span></a></li>
-            <%if(loggedIn){%>
-            	<li><a href="AccountSettings.jsp">Account Settings<span class="ui_icon aboutus"></span></a></li>
-            <%}else{%>
-            	<li><a href="Register.jsp" lang="selected">Sign Up<span class="ui_icon aboutus"></span></a></li>
-            <%} %>
-            <li><a href="ServerConfig.jsp">Server Configuration<span class="ui_icon services"></span></a></li>
-            <li><a href="ContactUs.jsp">Contact Us<span class="ui_icon contactus"></span></a></li>
-        </ul>
+				<li><a href="<%= response.encodeURL("index.jsp")%>">Home<span
+						class="ui_icon home"></span></a></li>
+				<%
+					if (loggedIn) {
+				%>
+				<li><a href="<%= response.encodeURL("AccountSettings.jsp")%>" lang="selected">Account Settings<span
+						class="ui_icon aboutus"></span></a></li>
+				<%
+					} else {
+				%>
+				<li><a href="<%= response.encodeURL("Register.jsp")%>">Sign Up<span
+						class="ui_icon aboutus"></span></a></li>
+				<%
+					}
+				%>
+				<li><a href="<%= response.encodeURL("ServerConfig.jsp")%>">Server Configuration<span
+						class="ui_icon services"></span></a></li>
+				<li><a href="<%= response.encodeURL("ContactUs.jsp")%>">Contact Us<span
+						class="ui_icon contactus"></span></a></li>
+			</ul>
     </div> <!-- end of sidebar -->
 
 	<div id="templatemo_main">
     	        
         <div id="content">
-        <%if(loggedIn){%>
-        					<div id="logout">
-            				<form method="post" name="contact" action="index.jsp">
-            				<input type="submit" name="logout" id="logout" value="Logout" />
-            				</form>
-            				</div>
-            <%}%>
             	
             <div class="scroll">
                 <div class="scrollContainer">
-                
+                	<!-- if user is logged in display logout button -->
+					<%if (loggedIn) {%>
+						<div id="logout">
+							<form method="post" name="contact" action="<%= response.encodeURL("index.jsp")%>">
+								<input type="submit" name="logout" id="logout" value="Logout" />
+							</form>
+						</div>
+					<%}%>
                     <div class="panel" id="account">
                         <%
 						if(loggedIn){%>

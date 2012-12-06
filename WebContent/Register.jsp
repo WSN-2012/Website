@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Register</title>
+<title>WSN Server - Register</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link href="css/template_style.css" rel="stylesheet" type="text/css" />
 <link href="css/coda-slider.css" rel="stylesheet" type="text/css" media="screen" charset="utf-8" />
@@ -62,15 +62,26 @@ if(request.getParameter("author")!=null &&
          <!-- end of header -->
         
         <ul class="navigation">
-            <li><a href="index.jsp">Home<span class="ui_icon home"></span></a></li>
-            <%if(loggedIn){%>
-            	<li><a href="AccountSettings.jsp">Account Settings<span class="ui_icon aboutus"></span></a></li>
-            <%}else{%>
-            	<li><a href="Register.jsp" lang="selected">Sign Up<span class="ui_icon aboutus"></span></a></li>
-            <%} %>
-            <li><a href="ServerConfig.jsp">Server Configuration<span class="ui_icon services"></span></a></li>
-            <li><a href="ContactUs.jsp">Contact Us<span class="ui_icon contactus"></span></a></li>
-        </ul>
+				<li><a href="<%= response.encodeURL("index.jsp")%>">Home<span
+						class="ui_icon home"></span></a></li>
+				<%
+					if (loggedIn) {
+				%>
+				<li><a href="<%= response.encodeURL("AccountSettings.jsp")%>">Account Settings<span
+						class="ui_icon aboutus"></span></a></li>
+				<%
+					} else {
+				%>
+				<li><a href="<%= response.encodeURL("Register.jsp")%>" lang="selected">Sign Up<span
+						class="ui_icon aboutus"></span></a></li>
+				<%
+					}
+				%>
+				<li><a href="<%= response.encodeURL("ServerConfig.jsp")%>">Server Configuration<span
+						class="ui_icon services"></span></a></li>
+				<li><a href="<%= response.encodeURL("ContactUs.jsp")%>">Contact Us<span
+						class="ui_icon contactus"></span></a></li>
+			</ul>
     </div> <!-- end of sidebar -->
 
 	<div id="templatemo_main">
