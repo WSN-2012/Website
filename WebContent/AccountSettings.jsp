@@ -2,7 +2,7 @@
 <%@page import="org.apache.catalina.ha.session.SessionMessageImpl"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@ page import="server.*" %>
+<%@ page import="server.*, database.*" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -21,7 +21,6 @@
 
 <body>
 <%
-boolean usernameExist = false;
 boolean loggedIn = false;
 boolean loginfail = false;//to printout message if the user inserts wrong or not existing credentials in login page
 User loggedInUser = (User) session.getAttribute(SessionKeys.USER_OBJECT);
@@ -35,7 +34,6 @@ if(loggedInUser != null){ //user is already logged in
 	}else if(request.getParameter("save_settings")!=null &&
 			request.getParameter("save_settings").equals("Save")){
 		if(request.getParameter("password")!=null && request.getParameter("password")!="" && request.getParameter("password").equals(request.getParameter("password2"))){
-			System.out.println("natty");
 			loggedInUser = SQLQueries.changeAccountSettings(request.getParameter("author"), loggedInUser.getUserName(), request.getParameter("username"), request.getParameter("email"), request.getParameter("password"));
 			if(loggedInUser!=null){
 				session.removeAttribute(SessionKeys.USER_OBJECT);
@@ -45,13 +43,11 @@ if(loggedInUser != null){ //user is already logged in
 			String newLocn = "index.jsp";
 			response.setHeader("Location",newLocn);
 		}else if(request.getParameter("password")!=null && !(request.getParameter("password").equals(request.getParameter("password2")))){
-			System.out.println("fabio");
 			request.setAttribute("err", "Password not equal");//Display error
 			response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
 			String newLocn = "Register.jsp";
 			response.setHeader("Location",newLocn);
 		}else{
-			System.out.println("fabio");
 			loggedInUser = SQLQueries.changeAccountSettings(request.getParameter("author"), loggedInUser.getUserName(), request.getParameter("username"), request.getParameter("email"));
 			if(loggedInUser!=null){
 				session.removeAttribute(SessionKeys.USER_OBJECT);
@@ -115,7 +111,7 @@ if(loggedInUser != null){ //user is already logged in
 	                                <label for="email">Edit Email:</label> <input type="text" id="email" name="email" value="<% out.print(((User)session.getAttribute(SessionKeys.USER_OBJECT)).getEmail()); %>" class="validate-email input_field" />
 	                                <div class="cleaner_h10"></div>
 	                                
-	                                <label for="username">Edit Username:</label> <input type="text" id="username" name="username" value=" <% out.print(((User)session.getAttribute(SessionKeys.USER_OBJECT)).getUserName()); %>" class="input_field" onchange="checkUsernameExistence()"/>
+	                                <label for="username">Edit Username:</label> <input type="text" id="username" name="username" value="<% out.print(((User)session.getAttribute(SessionKeys.USER_OBJECT)).getUserName()); %>" class="input_field" onchange="checkUsernameExistence()"/>
 	                                
 	                                <div class="cleaner_h10"></div>
 	                                

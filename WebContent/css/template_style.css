@@ -77,6 +77,12 @@ em { color: #f9a834; }
 .service_list li .service_four { background: url(images/onebit_21.png) center left no-repeat; }
 .service_list li .service_five { background: url(images/onebit_12.png) center left no-repeat; }
 
+
+td{
+	text-align: center;
+	padding: 3px;
+}
+
 #contact_form { padding: 0; }
 #contact_form form { margin: 0px; padding: 0px; }
 #contact_form form .input_field { width: 240px; padding: 8px; background: #333028; border: 1px solid #886; color: #FFF; }
@@ -157,3 +163,4 @@ em { color: #f9a834; }
 	padding: 20px 0;
 	text-align: center;
 }
+
