@@ -23,7 +23,12 @@
 </style>
 <script>
   $(document).ready(function(){
-    $("#accountsetsForm").validate();
+    $("#accountsetsForm").validate({
+    	rules: {
+	        password2: {
+	          equalTo: "#password"
+	        }
+      }});
   });
 </script>
 </head>
@@ -31,7 +36,6 @@
 <body>
 <%
 boolean loggedIn = false;
-boolean loginfail = false;//to printout message if the user inserts wrong or not existing credentials in login page
 User loggedInUser = (User) session.getAttribute(SessionKeys.USER_OBJECT);
 if(loggedInUser != null){ //user is already logged in
 	loggedIn = true;
@@ -39,7 +43,6 @@ if(loggedInUser != null){ //user is already logged in
 		session.removeAttribute(SessionKeys.USER_OBJECT);
 		session.invalidate();
 		loggedIn = false;
-		loginfail = false;
 	}else if(request.getParameter("save_settings")!=null &&
 			request.getParameter("save_settings").equals("Save")){
 		if(request.getParameter("password")!=null && request.getParameter("password")!="" && request.getParameter("password").equals(request.getParameter("password2"))){
@@ -51,20 +54,6 @@ if(loggedInUser != null){ //user is already logged in
 			response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
 			String newLocn = "index.jsp";
 			response.encodeURL("index.jsp");
-			response.setHeader("Location",newLocn);
-		//Password and confirm password are not equal, display error message	
-		}else if(request.getParameter("password")!=null && !(request.getParameter("password").equals(request.getParameter("password2")))){
-			request.setAttribute("err", "Password not equal");//Display error
-			response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
-			String newLocn = "Register.jsp";
-			response.encodeURL("Register.jsp");
-			response.setHeader("Location",newLocn);
-		//Password and confirm password are not equal, display error message	
-		}else if(request.getParameter("password")!=null && request.getParameter("password2")==null){
-			request.setAttribute("err", "Confirm password is need it");//Display error
-			response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
-			String newLocn = "Register.jsp";
-			response.encodeURL("Register.jsp");
 			response.setHeader("Location",newLocn);
 		}else{
 			loggedInUser = SQLQueries.changeAccountSettings(request.getParameter("author"), loggedInUser.getUserName(), request.getParameter("username"), request.getParameter("email"));
@@ -157,17 +146,18 @@ if(loggedInUser != null){ //user is already logged in
 	                                <% 
 										if(request.getAttribute("err")!=null){
 									%>
-	                            		<p id="errmsg" style="color: red;"><%out.print(request.getAttribute("err"));%></p>
+	                            	<p id="errmsg" style="color: red;"><%out.print(request.getAttribute("err"));%></p>
+	                            	<%}}else{
+										request.setAttribute("loginFail", true);
+										request.setAttribute("err", "You have to login first in order to change you account settings.");
+										RequestDispatcher rd = request.getRequestDispatcher("index.jsp");
+										rd.forward(request, response);
+										}
+									%>
 	                            </form>
 							</div>
 
-						<%}}else{
-							request.setAttribute("loginFail", true);
-							request.setAttribute("err", "You have to login first in order to change you account settings.");
-							RequestDispatcher rd = request.getRequestDispatcher("index.jsp");
-							rd.forward(request, response);
-							}
-						%>
+						
                     </div>
                 
                 </div>

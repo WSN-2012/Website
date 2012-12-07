@@ -130,8 +130,7 @@
 									out.print(loggedInUser.getName());
 								%>, you are currently logged in.
 							</p>
-							<form method="post" name="form_gateway"
-								action="<%=response.encodeURL("index.jsp")%>">
+							<form method="post" name="form_gateway" action="<%=response.encodeURL("index.jsp")%>">
 								<!-- display gateway list -->
 								<label for="gateways">Gateways</label> 
 								<select name="gateways" onchange="document.form_gateway.submit()">
