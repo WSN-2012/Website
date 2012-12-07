@@ -19,12 +19,12 @@
 <style type="text/css">
 	label.error { float: none; color: red; padding-left: .5em; vertical-align: top; }
 </style>
-</head>
- <script>
+<script>
   $(document).ready(function(){
     $("#registerForm").validate();
   });
 </script>
+</head>
 <body>
 <%
 boolean usernameExist = false;
@@ -65,9 +65,9 @@ if(request.getParameter("author")!=null &&
 				<li><a href="<%= response.encodeURL("index.jsp")%>">Home<span
 						class="ui_icon home"></span></a></li>
 				<%
-					if (loggedIn) {
+					if (session.getAttribute(SessionKeys.USER_OBJECT)!=null) {
 				%>
-				<li><a href="<%= response.encodeURL("AccountSettings.jsp")%>">Account Settings<span
+				<li><a href="<%= response.encodeURL("AccountSettings.jsp")%>" lang="selected">Account Settings<span
 						class="ui_icon aboutus"></span></a></li>
 				<%
 					} else {
@@ -96,6 +96,7 @@ if(request.getParameter("author")!=null &&
 						if(session.getAttribute(SessionKeys.USER_OBJECT)!=null){
 							response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
 							String newLocn = "index.jsp";
+							response.encodeURL("index.jsp");
 							response.setHeader("Location",newLocn);
 
 						}else{

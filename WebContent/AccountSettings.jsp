@@ -13,10 +13,19 @@
 <link href="css/coda-slider.css" rel="stylesheet" type="text/css" media="screen" charset="utf-8" />
 <script src="js/jquery-1.2.6.js" type="text/javascript"></script>
 <script src="js/jquery.localscroll-1.2.5.js" type="text/javascript" charset="utf-8"></script>
-<script src="js/jquery.serialScroll-1.2.1.js" type="text/javascript" charset="utf-8"></script>-->
+<script src="js/jquery.serialScroll-1.2.1.js" type="text/javascript" charset="utf-8"></script>
 <script src="js/coda-slider.js" type="text/javascript" charset="utf-8"></script>
 <script src="js/jquery.easing.1.3.js" type="text/javascript" charset="utf-8"></script>
 <script src="http://code.jquery.com/jquery-latest.js"></script>
+<script type="text/javascript" src="http://jzaefferer.github.com/jquery-validation/jquery.validate.js"></script>
+<style type="text/css">
+	label.error { float: none; color: red; padding-left: .5em; vertical-align: top; }
+</style>
+<script>
+  $(document).ready(function(){
+    $("#accountsetsForm").validate();
+  });
+</script>
 </head>
 
 <body>
@@ -41,11 +50,21 @@ if(loggedInUser != null){ //user is already logged in
 			}
 			response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
 			String newLocn = "index.jsp";
+			response.encodeURL("index.jsp");
 			response.setHeader("Location",newLocn);
+		//Password and confirm password are not equal, display error message	
 		}else if(request.getParameter("password")!=null && !(request.getParameter("password").equals(request.getParameter("password2")))){
 			request.setAttribute("err", "Password not equal");//Display error
 			response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
 			String newLocn = "Register.jsp";
+			response.encodeURL("Register.jsp");
+			response.setHeader("Location",newLocn);
+		//Password and confirm password are not equal, display error message	
+		}else if(request.getParameter("password")!=null && request.getParameter("password2")==null){
+			request.setAttribute("err", "Confirm password is need it");//Display error
+			response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
+			String newLocn = "Register.jsp";
+			response.encodeURL("Register.jsp");
 			response.setHeader("Location",newLocn);
 		}else{
 			loggedInUser = SQLQueries.changeAccountSettings(request.getParameter("author"), loggedInUser.getUserName(), request.getParameter("username"), request.getParameter("email"));
@@ -55,6 +74,7 @@ if(loggedInUser != null){ //user is already logged in
 			}
 			response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
 			String newLocn = "index.jsp";
+			response.encodeURL("index.jsp");
 			response.setHeader("Location",newLocn);
 		}
 	}
@@ -114,22 +134,22 @@ if(loggedInUser != null){ //user is already logged in
 						
 							<h2>Here you can modify your Account Settings</h2>
 							 <div id="accountSettings_form">
-	                            <form method="post" name="contact" >
+	                            <form method="post" name="accountsets" id="accountsetsForm">
 	                                
-	                                <label for="author">Edit Name:</label> <input type="text" id="author" name="author" value="<% out.print(((User)session.getAttribute(SessionKeys.USER_OBJECT)).getName()); %>" class="input_field" />
+	                                <label for="author">Edit Name:</label> <input type="text" id="author" name="author" class="input_field" value="<% out.print(((User)session.getAttribute(SessionKeys.USER_OBJECT)).getName()); %>" class="input_field" />
 	                                <div class="cleaner_h10"></div>
 	                                
-	                                <label for="email">Edit Email:</label> <input type="text" id="email" name="email" value="<% out.print(((User)session.getAttribute(SessionKeys.USER_OBJECT)).getEmail()); %>" class="validate-email input_field" />
+	                                <label for="email">Edit Email:</label> <input type="text" id="email" name="email" class="email input_field" value="<% out.print(((User)session.getAttribute(SessionKeys.USER_OBJECT)).getEmail()); %>" class="validate-email input_field" />
 	                                <div class="cleaner_h10"></div>
 	                                
-	                                <label for="username">Edit Username:</label> <input type="text" id="username" name="username" value="<% out.print(((User)session.getAttribute(SessionKeys.USER_OBJECT)).getUserName()); %>" class="input_field" onchange="checkUsernameExistence()"/>
+	                                <label for="username">Edit Username:</label> <input type="text" id="username" name="username" class="input_field" value="<% out.print(((User)session.getAttribute(SessionKeys.USER_OBJECT)).getUserName()); %>" class="input_field" onchange="checkUsernameExistence()"/>
 	                                
 	                                <div class="cleaner_h10"></div>
 	                                
 	                                <label for="password">Edit a new password:</label> <input type="password" id="password" name="password" class="input_field" />
 	                                <div class="cleaner_h10"></div>
 	                                
-	                                <label for="password">Repeat new password:</label> <input type="password" id="password2" name="password2" class="<%if(request.getParameter("password")!=null)out.print("required"); %> input_field" />
+	                                <label for="password2">Confirm new password:</label> <input type="password" id="password2" name="password2" class="input_field" />
 	                                <div class="cleaner_h10"></div>
 	
 	                                <input type="submit" class="submit_btn" name="save_settings" id="save_settings" value="Save" />
