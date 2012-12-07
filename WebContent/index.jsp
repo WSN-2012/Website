@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ page import="server.*, database.*, java.util.*"%>
-<%@ page session="true" %>
+<%@ page session="true"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -11,10 +11,13 @@
 <link href="css/coda-slider.css" rel="stylesheet" type="text/css"
 	media="screen" charset="utf-8" />
 <script src="js/jquery-1.2.6.js" type="text/javascript"></script>
-<script src="js/jquery.localscroll-1.2.5.js" type="text/javascript" charset="utf-8"></script>
-<script src="js/jquery.serialScroll-1.2.1.js" type="text/javascript" charset="utf-8"></script>
+<script src="js/jquery.localscroll-1.2.5.js" type="text/javascript"
+	charset="utf-8"></script>
+<script src="js/jquery.serialScroll-1.2.1.js" type="text/javascript"
+	charset="utf-8"></script>
 <script src="js/coda-slider.js" type="text/javascript" charset="utf-8"></script>
-<script src="js/jquery.easing.1.3.js" type="text/javascript" charset="utf-8"></script>
+<script src="js/jquery.easing.1.3.js" type="text/javascript"
+	charset="utf-8"></script>
 <script src="http://code.jquery.com/jquery-latest.js"></script>
 </head>
 <body>
@@ -64,25 +67,29 @@
 			</a>
 			<!-- end of header -->
 			<ul class="navigation">
-				<li><a href="<%= response.encodeURL("index.jsp")%>" lang="selected">Home<span
-						class="ui_icon home"></span></a></li>
+				<li><a href="<%=response.encodeURL("index.jsp")%>"
+					lang="selected">Home<span class="ui_icon home"></span></a></li>
 				<%
 					if (loggedIn) {
 				%>
-				<li><a href="<%= response.encodeURL("AccountSettings.jsp")%>">Account Settings<span
-						class="ui_icon aboutus"></span></a></li>
+				<li><a href="<%=response.encodeURL("AccountSettings.jsp")%>">Account
+						Settings<span class="ui_icon aboutus"></span>
+				</a></li>
 				<%
 					} else {
 				%>
-				<li><a href="<%= response.encodeURL("Register.jsp")%>">Sign Up<span
-						class="ui_icon aboutus"></span></a></li>
+				<li><a href="<%=response.encodeURL("Register.jsp")%>">Sign
+						Up<span class="ui_icon aboutus"></span>
+				</a></li>
 				<%
 					}
 				%>
-				<li><a href="<%= response.encodeURL("ServerConfig.jsp")%>">Server Configuration<span
-						class="ui_icon services"></span></a></li>
-				<li><a href="<%= response.encodeURL("ContactUs.jsp")%>">Contact Us<span
-						class="ui_icon contactus"></span></a></li>
+				<li><a href="<%=response.encodeURL("ServerConfig.jsp")%>">Server
+						Configuration<span class="ui_icon services"></span>
+				</a></li>
+				<li><a href="<%=response.encodeURL("ContactUs.jsp")%>">Contact
+						Us<span class="ui_icon contactus"></span>
+				</a></li>
 			</ul>
 		</div>
 		<!-- end of sidebar -->
@@ -92,13 +99,18 @@
 				<div class="scroll">
 					<div class="scrollContainer">
 						<!-- if user is logged in display logout button -->
-								<%if (loggedIn) {%>
-								<div id="logout">
-									<form method="post" name="contact" action="<%= response.encodeURL("index.jsp")%>">
-										<input type="submit" name="logout" id="logout" value="Logout" />
-									</form>
-								</div>
-								<%}%>
+						<%
+							if (loggedIn) {
+						%>
+						<div id="logout">
+							<form method="post" name="contact"
+								action="<%=response.encodeURL("index.jsp")%>">
+								<input type="submit" name="logout" id="logout" value="Logout" />
+							</form>
+						</div>
+						<%
+							}
+						%>
 						<div class="panel" id="home">
 							<h1>Welcome to the WSN Fall 2012 website!</h1>
 							<p>
@@ -116,14 +128,13 @@
 							<p>
 								<%
 									out.print(loggedInUser.getName());
-								%>, you are currently logged
-								in.
+								%>, you are currently logged in.
 							</p>
-							<form method="post" name="form_gateway" action="<%= response.encodeURL("index.jsp")%>">
+							<form method="post" name="form_gateway"
+								action="<%=response.encodeURL("index.jsp")%>">
 								<!-- display gateway list -->
-								<label for="gateways">Gateways</label>
-								<select name="gateways"
-									onchange="document.form_gateway.submit()">
+								<label for="gateways">Gateways</label> 
+								<select name="gateways" onchange="document.form_gateway.submit()">
 									<option value="Select Gateway">Select Gateway</option>
 									<!-- Retain gateway option selected after submitting the form -->
 									<%
@@ -131,12 +142,25 @@
 									%>
 									<option value="<%=request.getParameter("gateways")%>"
 										selected="selected"><%=SQLQueries.getGateway(
-							Integer.parseInt(request.getParameter("gateways")))
-							.getName()%></option>
+											Integer.parseInt(request.getParameter("gateways")))
+											.getName()%>
+									</option>
 									<%
 										}
-											List<Gateway> listOfGateways = SQLQueries.getAllGateway();
-											for (int i = 0; i < listOfGateways.size(); i++) {
+										List<Gateway> listOfGateways = SQLQueries.getAllGateway();
+										for (int i = 0; i < listOfGateways.size(); i++) {
+											if (request.getParameter("gateways") != null){
+												if(!(SQLQueries.getGateway(Integer.parseInt(request.getParameter("gateways"))).getName()
+														.equals(listOfGateways.get(i).getName()))){
+									%>
+									<option value="<%=listOfGateways.get(i).getId()%>">
+										<%
+											out.print(listOfGateways.get(i).getName());
+										%>
+									</option>
+									<%
+												}
+											} else {
 									%>
 									<option value="<%=listOfGateways.get(i).getId()%>">
 										<%
@@ -146,36 +170,51 @@
 									<%
 										}
 									%>
+									<%
+										}
+									%>
 								</select>
+								
 								<!-- display sensor list based on the gateway that is selected before-->
-								<label for="sensors">Sensors</label>
-								<select id="sensors" name="sensors"
-									onchange="document.form_gateway.submit()">
+								<label for="sensors">Sensors</label> 
+								<select id="sensors" name="sensors" onchange="document.form_gateway.submit()">
 									<option value="Select Sensor">Select Sensor</option>
 									<%
 										if (request.getParameter("sensors") != null
 													&& !request.getParameter("sensors").equals(
 															"Select Sensor")) {
 									%>
-									<option value="<%=request.getParameter("sensors")%>"
-										selected="selected"><%=SQLQueries.getSensor(
-							request.getParameter("sensors")).getName()%></option>
-
+									<option value="<%=request.getParameter("sensors")%>"selected="selected">
+									<%=SQLQueries.getSensor(request.getParameter("sensors")).getName()%></option>
 									<%
 										}
 											if (request.getParameter("gateways") != null
 													&& !request.getParameter("gateways").equals(
 															"Select Gateway")) {
-												List<Sensor> listOfSensors = SQLQueries
-														.getAllSensor(Integer.parseInt(request
-																.getParameter("gateways")));
+												List<Sensor> listOfSensors = SQLQueries.getAllSensor(Integer.parseInt(request.getParameter("gateways")));
 												for (int j = 0; j < listOfSensors.size(); j++) {
+													if (request.getParameter("sensors") != null && !request.getParameter("sensors").equals("Select Sensor")){
+														if(!SQLQueries.getSensor(request.getParameter("sensors")).getName().equals(listOfSensors.get(j).getName())) {
+
 									%>
 									<option value="<%=listOfSensors.get(j).getId()%>">
 										<%
 											out.print(listOfSensors.get(j).getName());
 										%>
 									</option>
+									<%
+														}
+													} else {
+									%>
+									<option value="<%=listOfSensors.get(j).getId()%>">
+										<%
+											out.print(listOfSensors.get(j).getName());
+										%>
+									</option>
+									<%
+										}
+									%>
+
 									<%
 										}
 											}
@@ -210,31 +249,49 @@
 										%>
 										<tr>
 											<td>
-												<%out.print(data.get(i).getUtimestamp());%>
+												<%
+													out.print(data.get(i).getUtimestamp());
+												%>
 											</td>
 											<td>
-												<%out.print(data.get(i).getWSData().get("ut"));%>
+												<%
+													out.print(data.get(i).getWSData().get("ut"));
+												%>
 											</td>
 											<td>
-												<%out.print(data.get(i).getWSData().get("t"));%>
+												<%
+													out.print(data.get(i).getWSData().get("t"));
+												%>
 											</td>
 											<td>
-												<%out.print(data.get(i).getWSData().get("t_mcu"));%>
+												<%
+													out.print(data.get(i).getWSData().get("t_mcu"));
+												%>
 											</td>
 											<td>
-												<%out.print(data.get(i).getWSData().get("ps"));%>
+												<%
+													out.print(data.get(i).getWSData().get("ps"));
+												%>
 											</td>
 											<td>
-												<%out.print(data.get(i).getWSData().get("v_mcu"));%>
+												<%
+													out.print(data.get(i).getWSData().get("v_mcu"));
+												%>
 											</td>
 											<td>
-												<%out.print(data.get(i).getWSData().get("up"));%>
+												<%
+													out.print(data.get(i).getWSData().get("up"));
+												%>
 											</td>
 											<td>
-												<%out.print(data.get(i).getWSData().get("rh"));%>
+												<%
+													out.print(data.get(i).getWSData().get("rh"));
+												%>
 											</td>
 											<td>
-												<%out.print(data.get(i).getWSData().get("v_in"));%>
+												<%
+													out.print(data.get(i).getWSData().get("v_in"));
+												%>
 											</td>
 										</tr>
 										<%
@@ -251,7 +308,8 @@
 							<p>Access to stored data is restricted! Please login.</p>
 
 							<div id="contact_form">
-								<form method="post" name="contact" action="<%= response.encodeURL("index.jsp")%>">
+								<form method="post" name="contact"
+									action="<%=response.encodeURL("index.jsp")%>">
 
 									<label for="username">Username:</label> <input type="text"
 										id="username" name="username" class="required input_field" />
@@ -269,7 +327,9 @@
 													.getAttribute("loginFail")) || loginfail) {
 									%>
 									<p id="errmsg" style="color: red;">
-										<%out.print(request.getAttribute("err"));%>
+										<%
+											out.print(request.getAttribute("err"));
+										%>
 									</p>
 									<%
 										}
