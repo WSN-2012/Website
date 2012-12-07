@@ -8,7 +8,7 @@ public class SQLQueries {
 	//database specifications, change to face your database requirements accordingly
 	private static String mConnectionURL = "jdbc:postgresql://localhost:5432/serverdb";
 	private static String mUser = "postgres";
-	private static String mPassword = "postgres";
+	private static String mPassword = "1234567890";
 	private static String mDriver = "org.postgresql.Driver";
 	
 	/**
@@ -265,7 +265,7 @@ public class SQLQueries {
 	 * @return
 	 * 			a Sensor instance
 	 */
-	public static Sensor setSensor(String sensorID, String gatewayID)
+	public static Sensor setSensor(String sensorID, String sensorName, String gatewayID)
 	{
 		//Create a new database connection
 		Database database = new Database(mConnectionURL, mUser, mPassword, mDriver);
@@ -274,7 +274,7 @@ public class SQLQueries {
 		database.Open();
 		
 		//Create Sensor instance from the newly registered gateway record in the DB
-		Sensor sensor =  database.setSensor(sensorID, gatewayID);
+		Sensor sensor =  database.setSensor(sensorID, sensorName, gatewayID);
 		database.Close();
 		return sensor;
 
