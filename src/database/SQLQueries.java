@@ -8,7 +8,7 @@ public class SQLQueries {
 	//database specifications, change to face your database requirements accordingly
 	private static String mConnectionURL = "jdbc:postgresql://localhost:5432/serverdb";
 	private static String mUser = "postgres";
-	private static String mPassword = "postgres";
+	private static String mPassword = "1234567890";
 	private static String mDriver = "org.postgresql.Driver";
 	
 	/**
@@ -82,6 +82,21 @@ public class SQLQueries {
 		boolean flag = database.exist(username);
 		database.Close();
 		return flag;
+
+	}
+	
+	public static User getAccount(String username)
+	{
+		//Create a new database connection
+		Database database = new Database(mConnectionURL, mUser, mPassword, mDriver);
+		
+		//Open the database connection
+		database.Open();
+		
+		//Create a boolean indicating user existence 
+		User user = database.getAccount(username);
+		database.Close();
+		return user;
 
 	}
 	

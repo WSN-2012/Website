@@ -189,6 +189,32 @@ public class Database {
 		return exist;
 	}
 	
+	public User getAccount(String username) {
+		User user = null;
+		try {
+			// Submit a query, creating a ResultSet object
+			ResultSet rs = statement
+					.executeQuery("select username from admins where username = '"
+							+ username + "'");
+			
+			//Check if username exists
+			if (rs.next()) {
+				user = new User(rs.getString("username").trim(),
+						rs.getString("password").trim(), rs.getString("email").trim(),
+						rs.getString("name").trim());
+			} 
+			rs.close();
+			return user;
+			
+		} catch (SQLException ex) {
+			while (ex != null) {
+				System.out.println("SQL Exception:  " + ex.getMessage());
+				ex = ex.getNextException();
+			}
+		}
+		return user;
+	}
+	
 	/**
 	 * Change User's personal data without changing password
 	 * @param name
