@@ -22,3 +22,6 @@ To download and install postgreSQL you can go to [PostgreSQL](http://www.postgre
 * `psql postgres`(connect to database as postgres user)
 * `CREATE DATABASE "DatabaseName";` (create database)
 * `psql databasename < data_base_dump` (import DB from dump file *outside the psql command line*. The projects database dump file is stored in the database folder. **Notice:** database should be created before importing the dump file)
+
+**Notice** 
+You need to Insert your database specifications in the [src/database/SQLQueries.java](https://github.com/WSN-2012/Website/blob/master/src/database/SQLQueries.java) file where todo comments appear. Also in order to be able to send emails from the contact us page you need to add your gmail account or modify the code to include your mail server. Modify mail specifications in [/WebContent/ContactUs.jsp](https://github.com/WSN-2012/Website/blob/master/WebContent/ContactUs.jsp).
