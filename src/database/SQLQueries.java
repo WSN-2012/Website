@@ -6,10 +6,10 @@ import java.util.List;
 public class SQLQueries {
 	
 	//database specifications, change to face your database requirements accordingly
-	private static String mConnectionURL = "jdbc:postgresql://localhost:5432/serverdb";
-	private static String mUser = "postgres";
-	private static String mPassword = "1234567890";
-	private static String mDriver = "org.postgresql.Driver";
+	private static String mConnectionURL = "";//TODO add database connection URL
+	private static String mUser = "";//TODO add database username
+	private static String mPassword = "";//TODO add database password
+	private static String mDriver = ""; //TODO add database driver
 	
 	/**
 	 * Call the login method of Database class

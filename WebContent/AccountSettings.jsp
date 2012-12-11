@@ -49,7 +49,6 @@ if(loggedInUser != null){ //user is already logged in
 			request.getParameter("save_settings").equals("Save")){
 		if(request.getParameter("oldpassword")!=null && request.getParameter("oldpassword")!="" && request.getParameter("password")!=null && request.getParameter("password")!="" && request.getParameter("password").equals(request.getParameter("password2"))){
 			if(SQLQueries.login(loggedInUser.getUserName(), request.getParameter("oldpassword"))==null){
-				System.out.println("Current password not correct. Password.");
 				request.setAttribute("err", "Current password is not correct");
 			}else if (loggedInUser.getUserName()!=request.getParameter("username")){
 				if(SQLQueries.usernameExistance(request.getParameter("username"))){
@@ -66,7 +65,6 @@ if(loggedInUser != null){ //user is already logged in
 					response.setHeader("Location",newLocn);	
 				}else{
 					request.setAttribute("err", "User is not successful updated. Try again!");
-					System.out.println("Username not updated. Password.");
 				}
 			}
 		}else{
@@ -84,7 +82,6 @@ if(loggedInUser != null){ //user is already logged in
 					response.encodeURL("index.jsp");
 					response.setHeader("Location",newLocn);
 				}else{
-					System.out.println("User not updated. No password.");
 					request.setAttribute("err", "User is not successful updated. Try again!");
 				}
 			}
