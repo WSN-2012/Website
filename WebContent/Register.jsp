@@ -39,6 +39,8 @@ if(request.getParameter("author")!=null &&
 	if(SQLQueries.usernameExistance(request.getParameter("username"))){
 		usernameExist = true;
 		request.setAttribute("err", "Username already exists! Choose another username and try again.");//Display error
+	}else if (!request.getParameter("password").equals(request.getParameter("password2"))){
+		request.setAttribute("err", "Password and and Repeat Password field do not match. Try again!");//Display error
 	}else{
 		User loggedInUser = SQLQueries.register(request.getParameter("username"), request.getParameter("password"), request.getParameter("email"), request.getParameter("author"));
 		if(loggedInUser!=null){

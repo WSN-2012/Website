@@ -50,7 +50,7 @@ if(loggedInUser != null){ //user is already logged in
 		if(request.getParameter("oldpassword")!=null && request.getParameter("oldpassword")!="" && request.getParameter("password")!=null && request.getParameter("password")!="" && request.getParameter("password").equals(request.getParameter("password2"))){
 			if(SQLQueries.login(loggedInUser.getUserName(), request.getParameter("oldpassword"))==null){
 				request.setAttribute("err", "Current password is not correct");
-			}else if (loggedInUser.getUserName()!=request.getParameter("username")){
+			}else if (!loggedInUser.getUserName().equals(request.getParameter("username"))){
 				if(SQLQueries.usernameExistance(request.getParameter("username"))){
 					request.setAttribute("err", "The username already exists! Choose another one.");
 				}
@@ -68,7 +68,7 @@ if(loggedInUser != null){ //user is already logged in
 				}
 			}
 		}else{
-			if (loggedInUser.getUserName()!=request.getParameter("username")){
+			if (!loggedInUser.getUserName().equals(request.getParameter("username"))){
 				if(SQLQueries.usernameExistance(request.getParameter("username"))){
 					request.setAttribute("err", "The username already exists! Choose another one.");
 				}

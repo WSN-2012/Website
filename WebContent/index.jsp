@@ -231,15 +231,15 @@
 								<table id="data_table" summary="Data from WSN">
 									<thead>
 										<tr>
-											<th scope="col">Timestamp</th>
-											<th scope="col">UT</th>
-											<th scope="col">T</th>
-											<th scope="col">T_MCU</th>
-											<th scope="col">PS</th>
-											<th scope="col">V_MCU</th>
-											<th scope="col">UP</th>
-											<th scope="col">RH</th>
-											<th scope="col">V_IN</th>
+											<th scope="col">Timestamp<br/><span style="font-size: 8px;font-weight: lighter;">Creation date</span></th>
+											<th scope="col">UT<br/><span style="font-size: 8px;font-weight: lighter;">Unix time</span></th>
+											<th scope="col">T<br/><span style="font-size: 8px;font-weight: lighter;">Temperature</span></th>
+											<th scope="col">T_MCU<br/></th>
+											<th scope="col">PS<br/><span style="font-size: 8px;font-weight: lighter;">Power Saver Indicator</span></th>
+											<th scope="col">V_MCU<br/><span style="font-size: 8px;font-weight: lighter;">Microcontroller Voltage</span></th>
+											<th scope="col">UP<br/><span style="font-size: 8px;font-weight: lighter;">Uptime (HEX format)</span></th>
+											<th scope="col">RH<br/><span style="font-size: 8px;font-weight: lighter;">Relative Humidity in %</span></th>
+											<th scope="col">V_IN<br/><span style="font-size: 8px;font-weight: lighter;">Voltage Input</span></th>
 										</tr>
 									</thead>
 									<tbody>
@@ -337,7 +337,7 @@
 							</div>
 							<br />
 							<p>
-								If you don't have an account yet, please <a href="#account">register
+								If you don't have an account yet, please <a href="<%=response.encodeURL("Register.jsp")%>">register
 									here</a>. An administrator will receive your request.
 							</p>
 							<%

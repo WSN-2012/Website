@@ -35,13 +35,13 @@ request.getParameter("sendEmail").equals("Send")){
 	String host="", user="", pass="";
 	host ="smtp.gmail.com"; //"smtp.gmail.com";
 	//****************************Add email username below*********************************
-	user ="kozzetest"; // gmail id to send the emails
+	user =""; // gmail id to send the emails
 	//****************************Add email password below*********************************
-	pass ="kostas01"; //Your gmail password
+	pass =""; //Your gmail password
 	String SSL_FACTORY = "javax.net.ssl.SSLSocketFactory";
 	//don't forget to not pass this in the github when commiting
 	//****************************Add outgoing email below*********************************
-	String to ="wsnteam2012@googlegroups.com"; // out going email id
+	String to =""; // out going email id
 	String from =request.getParameter("email"); //Email id of the recipient
 	String subject = request.getParameter("name") + " WSN web contact page";//Subject
 	String messageText =request.getParameter("text");//Message to be sent
@@ -68,11 +68,9 @@ request.getParameter("sendEmail").equals("Send")){
 	try {
 		transport.sendMessage(msg, msg.getAllRecipients());
 		request.setAttribute("err", "Message has been successfully sent");
-		out.println("message successfully sended"); // assume it was sent
 	}
 	catch (Exception err) {
 		request.setAttribute("err", "Message has not been sent. Try again!");
-		out.println("message not successfully sended"); // assume it’s a fail
 	}
 	transport.close();
 }

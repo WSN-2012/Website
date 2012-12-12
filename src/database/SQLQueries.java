@@ -7,8 +7,8 @@ public class SQLQueries {
 	
 	//database specifications, change to face your database requirements accordingly
 	private static String mConnectionURL = "jdbc:postgresql://localhost:5432/serverdb";//TODO add database connection url
-	private static String mUser = "postgres";//TODO add database username
-	private static String mPassword = "1234567890";//TODO add database password
+	private static String mUser = "";//TODO add database username
+	private static String mPassword = "";//TODO add database password
 	private static String mDriver = "org.postgresql.Driver";//TODO add database driver
 	
 	/**
