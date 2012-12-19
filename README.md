@@ -25,3 +25,18 @@ To download and install postgreSQL you can go to [PostgreSQL](http://www.postgre
 
 **Notice** 
 You need to Insert your database specifications in the [src/database/SQLQueries.java](https://github.com/WSN-2012/Website/blob/master/src/database/SQLQueries.java) file where todo comments appear. Also in order to be able to send emails from the contact us page you need to add your gmail account or modify the code to include your mail server. Modify mail specifications in [/WebContent/ContactUs.jsp](https://github.com/WSN-2012/Website/blob/master/WebContent/ContactUs.jsp).
+
+## License
+Copyright 2012 KTH
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+   [http://www.apache.org/licenses/LICENSE-2.0](http://www.apache.org/licenses/LICENSE-2.0)
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
