@@ -13,7 +13,8 @@ Website contains a page for display bundlepayload data, filled with our systems 
 A server is needed in order to be able to upload and run the website on it. In our project we used apache tomcat 7 but any server version can be used. You can download [Tomcat 7](http://tomcat.apache.org/download-70.cgi) and you can follow the [instructions](http://tomcat.apache.org/tomcat-7.0-doc/setup.html) for installation guidelines. To upload the project in your server you have to do the following:
 * create a war file using standard Java jar tool by typing in the command line:
   * `cd <project path>/Website` (go to the project directory)
-  * `jar cf Website.war .` (create the war file (c->create war file, f->specify the war file name, .-> represents the current directory). **Notice:** do not forget to include all the appropriate libraries for example gson, database and mail jar. To do so include all the jar files under /WEB-INF/lib before creating the war file)
+  * `cp libs/mail.jar libs/postgresql-9.2-1000.jdbc4.jar libs/gson-2.2.2.jar WEB-INF/lib` (copy all the appropriate libraries in the WEB-INF to include them in the war file creation)
+  * `jar cf Website.war .` (create the war file (c->create war file, f->specify the war file name, .-> represents the current directory))
 * enter the servers manager/html page
 * deploy the war file in the website and your website is up and running in your server
 
